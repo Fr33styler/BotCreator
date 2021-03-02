@@ -21,9 +21,10 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>ro.fr33styler.botcreator</mainClass>
+                            <mainClass>ro.fr33styler.botcreator.Main</mainClass>
                         </manifest>
                     </archive>
+                    <finalName>BotCreator-${project.version}</finalName>
                 </configuration>
             </plugin>
             <plugin>
@@ -49,49 +50,9 @@
     <dependencies>
 
         <dependency>
-            <groupId>ro.fr33styler.botcreator</groupId>
-            <artifactId>version</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>ro.fr33styler.botcreator</groupId>
-            <artifactId>version_1_12</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>ro.fr33styler.botcreator</groupId>
-            <artifactId>version_1_15</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>ro.fr33styler.botcreator</groupId>
-            <artifactId>version_1_16</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-serializer-gson</artifactId>
+            <version>4.2.0</version>
         </dependency>
 
         <dependency>
@@ -99,6 +60,24 @@
             <artifactId>packetlib</artifactId>
             <version>1.8</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ro.fr33styler.botcreator</groupId>
+            <artifactId>version_1_16</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ro.fr33styler.botcreator</groupId>
+            <artifactId>version_1_12</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ro.fr33styler.botcreator</groupId>
+            <artifactId>version_1_15</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
     </dependencies>

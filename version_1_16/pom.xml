@@ -53,7 +53,6 @@
             <version>1.16.4-2-SNAPSHOT</version>
         </dependency>
 
-
         <dependency>
             <groupId>ro.fr33styler.botcreator</groupId>
             <artifactId>version</artifactId>

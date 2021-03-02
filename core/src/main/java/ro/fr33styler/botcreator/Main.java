@@ -14,35 +14,22 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class BotCreator {
+public class Main {
 
-    public static final String PROJECT_NAME = "BotCreator";
-
-    private static final Logger LOGGER = Logger.getLogger(PROJECT_NAME);
+    private static final Logger LOGGER = Logger.getLogger("BotCreator");
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
 
     private static Bot[] clients = new Bot[0];
-    private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
 
     public static void main(String[] args) {
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) ->
                 LOGGER.log(Level.SEVERE, null, throwable)
         );
 
-        JFrame frame = new JFrame(BotCreator.PROJECT_NAME);
+        JFrame frame = new JFrame("BotCreator");
 
         frame.setResizable(false);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-        try {
-            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-        }
 
         //Bottom
         JPanel bottomPanel = new JPanel();

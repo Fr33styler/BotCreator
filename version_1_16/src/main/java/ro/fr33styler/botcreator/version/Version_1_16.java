@@ -9,6 +9,8 @@ import com.github.steveice10.packetlib.event.session.SessionAdapter;
 import com.github.steveice10.packetlib.event.session.SessionListener;
 import com.github.steveice10.packetlib.packet.Packet;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,7 +37,12 @@ public class Version_1_16 implements Version {
             public void packetReceived(PacketReceivedEvent receiveEvent) {
                 if (receiveEvent.getPacket() instanceof ServerChatPacket) {
                     ServerChatPacket chatPacket = receiveEvent.getPacket();
-                    logger.log(Level.INFO, "Received Message: {0}", chatPacket.getMessage().toString());
+                    for (Component component : chatPacket.getMessage().children()) {
+                        if (component instanceof TextComponent) {
+                            logger.log(Level.INFO, "Received Message: {0}", ((TextComponent) component).content());
+                            break;
+                        }
+                    }
                 }
             }
 
