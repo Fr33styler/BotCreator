@@ -1,0 +1,6 @@
+# Project exclude paths
+/core/target/
+/version/target/
+/version_1_12/target/
+/version_1_15/target/
+/version_1_16/target/
