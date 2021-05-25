@@ -9,8 +9,8 @@
         <module name="core" />
         <module name="version_1_12" />
         <module name="version_1_15" />
-        <module name="version_1_16" />
         <module name="version" />
+        <module name="version_1_16" />
       </profile>
     </annotationProcessing>
   </component>

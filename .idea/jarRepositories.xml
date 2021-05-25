@@ -2,6 +2,11 @@
 <project version="4">
   <component name="RemoteRepositoriesConfiguration">
     <remote-repository>
+      <option name="id" value="ossrh" />
+      <option name="name" value="ossrh" />
+      <option name="url" value="https://oss.sonatype.org/service/local/staging/deploy/maven2/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="central" />
       <option name="name" value="Central Repository" />
       <option name="url" value="https://repo.maven.apache.org/maven2" />
@@ -15,6 +20,11 @@
       <option name="id" value="spacehq" />
       <option name="name" value="spacehq" />
       <option name="url" value="https://repo.spacehq.org/content/repositories/snapshots/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="bintray-guardsquare-proguard" />
+      <option name="name" value="bintray" />
+      <option name="url" value="https://dl.bintray.com/guardsquare/proguard" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="central" />
