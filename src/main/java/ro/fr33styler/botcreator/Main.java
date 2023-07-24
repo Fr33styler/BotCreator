@@ -44,7 +44,11 @@ public class Main {
                     String text = sendInput.getText();
                     for (Bot bot : clients) {
                         if (selected.equals("All") || selected.equals(bot.getName())) {
-                            bot.sendMessage(text);
+                            if (text.startsWith("/")) {
+                                bot.executeCommand(text.substring(1));
+                            } else {
+                                bot.sendMessage(text);
+                            }
                         }
                     }
                     sendInput.setText("/");
