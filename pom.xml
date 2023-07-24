@@ -6,7 +6,7 @@
 
     <groupId>ro.fr33styler.minecraft</groupId>
     <artifactId>bot-creator</artifactId>
-    <version>1.20</version>
+    <version>1.20.1</version>
 
     <repositories>
         <repository>
