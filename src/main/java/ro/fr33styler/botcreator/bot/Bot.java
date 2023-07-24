@@ -10,7 +10,6 @@ import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
 import com.github.steveice10.packetlib.tcp.TcpSessionFactory;
 
-import java.net.Proxy;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,7 +28,7 @@ public class Bot {
 
     public void connect(String host, int port) {
 
-        session = new Client(host, port, new MinecraftProtocol(name), new TcpSessionFactory(Proxy.NO_PROXY)).getSession();
+        session = new Client(host, port, new MinecraftProtocol(name), new TcpSessionFactory()).getSession();
 
         session.addListener(new SessionAdapter() {
 

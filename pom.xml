@@ -6,7 +6,7 @@
 
     <groupId>ro.fr33styler.minecraft</groupId>
     <artifactId>bot-creator</artifactId>
-    <version>1.12.2</version>
+    <version>1.15.2</version>
 
     <repositories>
         <repository>
@@ -64,13 +64,7 @@
         <dependency>
             <groupId>com.github.steveice10</groupId>
             <artifactId>MCProtocolLib</artifactId>
-            <version>1.12.2-2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.GeyserMC</groupId>
-            <artifactId>opennbt</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
+            <version>1.15.2-1</version>
         </dependency>
     </dependencies>
 
