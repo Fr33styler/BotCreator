@@ -2,12 +2,12 @@ package ro.fr33styler.botcreator.bot;
 
 import com.github.steveice10.mc.protocol.MinecraftProtocol;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
-import com.github.steveice10.mc.protocol.packet.ingame.client.ClientChatPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.ServerChatPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundChatPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatPacket;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
-import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
+import com.github.steveice10.packetlib.packet.Packet;
 import com.github.steveice10.packetlib.tcp.TcpClientSession;
 import net.kyori.adventure.text.flattener.ComponentFlattener;
 
@@ -34,10 +34,10 @@ public class Bot {
         session.addListener(new SessionAdapter() {
 
             @Override
-            public void packetReceived(PacketReceivedEvent event) {
-                if (event.getPacket() instanceof ServerChatPacket) {
+            public void packetReceived(Session session, Packet packet) {
+                if (packet instanceof ClientboundChatPacket) {
                     StringBuilder text = new StringBuilder();
-                    ComponentFlattener.textOnly().flatten(event.<ServerChatPacket>getPacket().getMessage(), text::append);
+                    ComponentFlattener.textOnly().flatten(((ClientboundChatPacket) packet).getMessage(), text::append);
                     logger.log(Level.INFO, "Received Message: {0}", text);
                 }
             }
@@ -60,7 +60,7 @@ public class Bot {
 
     public void sendMessage(String message) {
         if (isOnline()) {
-            session.send(new ClientChatPacket(message));
+            session.send(new ServerboundChatPacket(message));
         }
     }
 
