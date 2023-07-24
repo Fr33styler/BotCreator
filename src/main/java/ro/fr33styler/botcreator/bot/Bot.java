@@ -1,14 +1,15 @@
 package ro.fr33styler.botcreator.bot;
 
 import com.github.steveice10.mc.protocol.MinecraftProtocol;
+import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerChatPacket;
-import com.github.steveice10.packetlib.Client;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
 import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
-import com.github.steveice10.packetlib.tcp.TcpSessionFactory;
+import com.github.steveice10.packetlib.tcp.TcpClientSession;
+import net.kyori.adventure.text.flattener.ComponentFlattener;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,20 +29,24 @@ public class Bot {
 
     public void connect(String host, int port) {
 
-        session = new Client(host, port, new MinecraftProtocol(name), new TcpSessionFactory()).getSession();
+        session = new TcpClientSession(host, port, new MinecraftProtocol(name));
 
         session.addListener(new SessionAdapter() {
 
             @Override
             public void packetReceived(PacketReceivedEvent event) {
                 if (event.getPacket() instanceof ServerChatPacket) {
-                    logger.log(Level.INFO, "Received Message: {0}", event.<ServerChatPacket>getPacket().getMessage().getFullText());
+                    StringBuilder text = new StringBuilder();
+                    ComponentFlattener.textOnly().flatten(event.<ServerChatPacket>getPacket().getMessage(), text::append);
+                    logger.log(Level.INFO, "Received Message: {0}", text);
                 }
             }
 
             @Override
             public void disconnected(DisconnectedEvent event) {
-                logger.log(Level.INFO, "Disconnected: {0}", event.getReason());
+                StringBuilder text = new StringBuilder();
+                ComponentFlattener.textOnly().flatten(DefaultComponentSerializer.get().deserialize(event.getReason()), text::append);
+                logger.log(Level.INFO, "Disconnected: {0}", text);
             }
 
         });
