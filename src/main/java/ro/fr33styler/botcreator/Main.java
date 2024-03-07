@@ -20,6 +20,14 @@ public class Main {
 
     public static void main(String[] args) {
 
+        if (Double.parseDouble(System.getProperty("java.class.version")) < 61) {
+            Toolkit.getDefaultToolkit().beep();
+            JOptionPane.showMessageDialog(null,
+                    "You need Java 17 or higher to run this!",
+                    "Version not supported!", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         JFrame frame = new JFrame("BotCreator");
 
         frame.setResizable(false);
@@ -138,7 +146,7 @@ public class Main {
         frame.pack();
         frame.setVisible(true);
 
-        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> LOGGER.log(Level.SEVERE, null, throwable));
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> LOGGER.log(Level.SEVERE, throwable.getMessage(), throwable));
         LOGGER.info("Bot Creator has started!");
 
     }
