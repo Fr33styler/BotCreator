@@ -1,28 +1,24 @@
 package ro.fr33styler.botcreator.bot;
 
-import com.github.steveice10.mc.protocol.MinecraftProtocol;
-import com.github.steveice10.mc.protocol.data.game.ArgumentSignature;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundSystemChatPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatCommandPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatPacket;
-import com.github.steveice10.packetlib.Session;
-import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
-import com.github.steveice10.packetlib.event.session.SessionAdapter;
-import com.github.steveice10.packetlib.packet.Packet;
-import com.github.steveice10.packetlib.tcp.TcpClientSession;
 import net.kyori.adventure.text.flattener.ComponentFlattener;
+import org.geysermc.mcprotocollib.network.Session;
+import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
+import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
+import org.geysermc.mcprotocollib.network.packet.Packet;
+import org.geysermc.mcprotocollib.network.tcp.TcpClientSession;
+import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundSystemChatPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatCommandPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatPacket;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Bot {
 
 
-    private static final List<ArgumentSignature> EMPTY_LIST = new ArrayList<>(0);
     private static final BitSet EMPTY_BYTE_SET = new BitSet();
 
     private Session session;
@@ -73,9 +69,9 @@ public class Bot {
         }
     }
 
-    public void executeCommand(String message) {
+    public void executeCommand(String command) {
         if (isOnline()) {
-            session.send(new ServerboundChatCommandPacket(message, Instant.now().toEpochMilli(), 0L, EMPTY_LIST, 0, EMPTY_BYTE_SET));
+            session.send(new ServerboundChatCommandPacket(command));
         }
     }
 

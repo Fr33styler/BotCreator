@@ -6,12 +6,20 @@
 
     <groupId>ro.fr33styler.minecraft</groupId>
     <artifactId>bot-creator</artifactId>
-    <version>1.20.4</version>
+    <version>1.20.6</version>
 
     <repositories>
         <repository>
-            <id>opencollab</id>
+            <id>jitpack.io</id>
+            <url>https://www.jitpack.io</url>
+        </repository>
+        <repository>
+            <id>opencollab-snapshots</id>
             <url>https://repo.opencollab.dev/maven-snapshots/</url>
+        </repository>
+        <repository>
+            <id>opencollab-releases</id>
+            <url>https://repo.opencollab.dev/maven-releases/</url>
         </repository>
     </repositories>
 
@@ -62,9 +70,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.steveice10</groupId>
-            <artifactId>mcprotocollib</artifactId>
-            <version>1.20.4-2-SNAPSHOT</version>
+            <groupId>org.geysermc.mcprotocollib</groupId>
+            <artifactId>protocol</artifactId>
+            <version>1.20.6-2-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
