@@ -53,10 +53,13 @@ public class Main {
             @Override
             public void keyPressed(KeyEvent event) {
                 if (event.getKeyCode() == KeyEvent.VK_UP && position > 0) {
-                    if (position == history.size()) history.add("/");
                     sendInput.setText(history.get(--position));
-                } else if (event.getKeyCode() == KeyEvent.VK_DOWN && position + 1 < history.size()) {
-                    sendInput.setText(history.get(++position));
+                } else if (event.getKeyCode() == KeyEvent.VK_DOWN && position < history.size()) {
+                    if (position + 1 == history.size()) {
+                        sendInput.setText("/");
+                    } else {
+                        sendInput.setText(history.get(++position));
+                    }
                 } else if (event.getKeyCode() == KeyEvent.VK_ENTER && clientsBox.getSelectedItem() instanceof String) {
                     String selected = (String) clientsBox.getSelectedItem();
                     String text = sendInput.getText();
@@ -69,10 +72,9 @@ public class Main {
                             }
                         }
                     }
-                    history.remove("/");
                     history.remove(text);
-
                     history.add(text);
+
                     sendInput.setText("/");
                     position = history.size();
                 }
