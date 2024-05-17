@@ -8,7 +8,9 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,11 +45,20 @@ public class Main {
         JTextField sendInput = new JTextField("/", 64);
         bottomPanel.add(sendInput);
 
+        List<String> history = new ArrayList<>();
+
         sendInput.addKeyListener(new KeyAdapter() {
 
+            private int position = 0;
+
             @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyChar() == KeyEvent.VK_ENTER && clientsBox.getSelectedItem() instanceof String) {
+            public void keyPressed(KeyEvent event) {
+                if (event.getKeyCode() == KeyEvent.VK_UP && position > 0) {
+                    if (position == history.size()) history.add("/");
+                    sendInput.setText(history.get(--position));
+                } else if (event.getKeyCode() == KeyEvent.VK_DOWN && position + 1 < history.size()) {
+                    sendInput.setText(history.get(++position));
+                } else if (event.getKeyCode() == KeyEvent.VK_ENTER && clientsBox.getSelectedItem() instanceof String) {
                     String selected = (String) clientsBox.getSelectedItem();
                     String text = sendInput.getText();
                     for (Bot bot : clients) {
@@ -59,7 +70,10 @@ public class Main {
                             }
                         }
                     }
+                    history.remove(text);
+                    history.add(text);
                     sendInput.setText("/");
+                    position = history.size();
                 }
             }
 
