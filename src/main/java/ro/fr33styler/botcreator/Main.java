@@ -69,7 +69,9 @@ public class Main {
                             }
                         }
                     }
+                    history.remove("/");
                     history.remove(text);
+
                     history.add(text);
                     sendInput.setText("/");
                     position = history.size();
