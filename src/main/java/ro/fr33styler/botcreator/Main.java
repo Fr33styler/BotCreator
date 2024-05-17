@@ -45,11 +45,10 @@ public class Main {
         JTextField sendInput = new JTextField("/", 64);
         bottomPanel.add(sendInput);
 
-        List<String> history = new ArrayList<>();
-
         sendInput.addKeyListener(new KeyAdapter() {
 
             private int position = 0;
+            private final List<String> history = new ArrayList<>();
 
             @Override
             public void keyPressed(KeyEvent event) {
