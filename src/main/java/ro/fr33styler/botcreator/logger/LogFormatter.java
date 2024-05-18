@@ -8,7 +8,7 @@ import java.util.logging.LogRecord;
 
 public class LogFormatter extends Formatter {
 
-    private final DateFormat dateFormat = new SimpleDateFormat("h:mm a");
+    private final DateFormat dateFormat = new SimpleDateFormat("hh:mm");
     private final Date date = new Date();
 
     @Override

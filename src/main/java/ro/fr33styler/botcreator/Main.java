@@ -16,9 +16,9 @@ import java.util.logging.Logger;
 
 public class Main {
 
-    private static final Logger LOGGER = Logger.getLogger("BotCreator");
+    public static final Logger LOGGER = Logger.getLogger("BotCreator");
 
-    private static final Deque<Bot> clients = new ArrayDeque<>();
+    private static final Deque<Bot> bots = new ArrayDeque<>();
 
     public static void main(String[] args) {
 
@@ -38,9 +38,9 @@ public class Main {
         //Bottom
         JPanel bottomPanel = new JPanel();
 
-        JComboBox<String> clientsBox = new JComboBox<>();
-        clientsBox.addItem("All");
-        bottomPanel.add(clientsBox);
+        JComboBox<String> botsBox = new JComboBox<>();
+        botsBox.addItem("All");
+        bottomPanel.add(botsBox);
 
         JTextField sendInput = new JTextField("/", 64);
         bottomPanel.add(sendInput);
@@ -55,16 +55,13 @@ public class Main {
                 if (event.getKeyCode() == KeyEvent.VK_UP && position > 0) {
                     sendInput.setText(history.get(--position));
                 } else if (event.getKeyCode() == KeyEvent.VK_DOWN && position < history.size()) {
-                    if (position + 1 == history.size()) {
-                        sendInput.setText("/");
-                    } else {
-                        sendInput.setText(history.get(++position));
-                    }
-                } else if (event.getKeyCode() == KeyEvent.VK_ENTER && clientsBox.getSelectedItem() instanceof String) {
-                    String selected = (String) clientsBox.getSelectedItem();
+                    sendInput.setText(position + 1 == history.size() ? "/" : history.get(++position));
+                } else if (event.getKeyCode() == KeyEvent.VK_ENTER) {
+                    String selected = (String) botsBox.getSelectedItem();
+
                     String text = sendInput.getText();
-                    for (Bot bot : clients) {
-                        if (selected.equals("All") || selected.equals(bot.getName())) {
+                    for (Bot bot : bots) {
+                        if (selected == null || selected.equals("All") || selected.equals(bot.getName())) {
                             if (text.startsWith("/")) {
                                 bot.executeCommand(text.substring(1));
                             } else {
@@ -130,7 +127,12 @@ public class Main {
             try {
                 amount = Integer.parseInt(clientsInput.getText());
             } catch (NumberFormatException exception) {
-                LOGGER.log(Level.SEVERE, "The clients must be a number!");
+                LOGGER.log(Level.SEVERE, "The number of clients must be a number!");
+                return;
+            }
+
+            if (amount < 0) {
+                LOGGER.log(Level.SEVERE, "The number of clients must be 0 or higher!");
                 return;
             }
 
@@ -139,17 +141,17 @@ public class Main {
 
             String host = hostInput.getText();
 
-            while (clients.size() < amount) {
-                int id = clients.size();
-                clients.addLast(new Bot("Bot_" + id, LOGGER));
-                clientsBox.addItem("Bot_" + id);
+            while (bots.size() < amount) {
+                int id = bots.size();
+                bots.addLast(new Bot("Bot_" + id));
+                botsBox.addItem("Bot_" + id);
             }
-            while (clients.size() > amount) {
-                Bot bot = clients.removeLast();
+            while (bots.size() > amount) {
+                Bot bot = bots.removeLast();
                 bot.disconnect();
-                clientsBox.removeItem(bot.getName());
+                botsBox.removeItem(bot.getName());
             }
-            for (Bot client : clients) {
+            for (Bot client : bots) {
                 if (!client.isOnline()) {
                     client.connect(host, port);
                 }
