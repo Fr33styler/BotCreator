@@ -143,8 +143,8 @@ public class Main {
 
             while (bots.size() < amount) {
                 int id = bots.size();
-                bots.addLast(new Bot("Bot_" + id));
-                botsBox.addItem("Bot_" + id);
+                bots.addLast(new Bot("ahmad_1" + id));
+                botsBox.addItem("ahmad_1" + id);
             }
             while (bots.size() > amount) {
                 Bot bot = bots.removeLast();
