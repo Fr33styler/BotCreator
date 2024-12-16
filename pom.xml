@@ -6,7 +6,7 @@
 
     <groupId>ro.fr33styler.minecraft</groupId>
     <artifactId>bot-creator</artifactId>
-    <version>1.21</version>
+    <version>1.21.4</version>
 
     <repositories>
         <repository>
@@ -34,7 +34,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.3</version>
+                <version>3.6.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -68,7 +68,7 @@
         <dependency>
             <groupId>org.geysermc.mcprotocollib</groupId>
             <artifactId>protocol</artifactId>
-            <version>1.21-SNAPSHOT</version>
+            <version>1.21.4-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
