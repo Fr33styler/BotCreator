@@ -1,7 +1,7 @@
 package ro.fr33styler.botcreator.bot;
 
-import org.geysermc.mcprotocollib.network.Session;
-import org.geysermc.mcprotocollib.network.tcp.TcpClientSession;
+import org.geysermc.mcprotocollib.network.ClientSession;
+import org.geysermc.mcprotocollib.network.factory.ClientNetworkSessionFactory;
 import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatCommandPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatPacket;
@@ -13,7 +13,7 @@ public class Bot {
 
     private static final BitSet EMPTY_BYTE_SET = new BitSet();
 
-    private Session session;
+    private ClientSession session;
     private final String name;
 
     public Bot(String name) {
@@ -30,7 +30,7 @@ public class Bot {
 
     public void sendMessage(String message) {
         if (isOnline()) {
-            session.send(new ServerboundChatPacket(message, Instant.now().toEpochMilli(), 0L, null, 0, EMPTY_BYTE_SET));
+            session.send(new ServerboundChatPacket(message, Instant.now().toEpochMilli(), 0L, null, 0, EMPTY_BYTE_SET, 0));
         }
     }
 
@@ -41,7 +41,8 @@ public class Bot {
     }
 
     public void connect(String host, int port) {
-        session = new TcpClientSession(host, port, new MinecraftProtocol(name));
+        session = ClientNetworkSessionFactory.factory()
+                .setAddress(host, port).setProtocol(new MinecraftProtocol(name)).create();
         session.addListener(new BotSession(name));
         session.connect();
     }
