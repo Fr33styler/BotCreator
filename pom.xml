@@ -6,7 +6,7 @@
 
     <groupId>ro.fr33styler.minecraft</groupId>
     <artifactId>bot-creator</artifactId>
-    <version>1.21.5</version>
+    <version>1.21.11</version>
 
     <repositories>
         <repository>
@@ -68,7 +68,7 @@
         <dependency>
             <groupId>org.geysermc.mcprotocollib</groupId>
             <artifactId>protocol</artifactId>
-            <version>1.21.5-SNAPSHOT</version>
+            <version>1.21.11-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
