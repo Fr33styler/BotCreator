@@ -6,72 +6,33 @@
 
     <groupId>ro.fr33styler.minecraft</groupId>
     <artifactId>bot-creator</artifactId>
-    <version>1.21.11</version>
+    <version>2.0.0</version>
+    <packaging>pom</packaging>
 
-    <repositories>
-        <repository>
-            <id>opencollab-snapshots</id>
-            <url>https://repo.opencollab.dev/maven-snapshots/</url>
-        </repository>
-        <repository>
-            <id>opencollab-releases</id>
-            <url>https://repo.opencollab.dev/maven-releases/</url>
-        </repository>
-    </repositories>
+    <modules>
+        <module>bot-creator-api</module>
+        <module>bot-creator-main</module>
+    </modules>
 
     <properties>
-        <plugin.name>BotCreator</plugin.name>
-        <plugin.main.classpath>ro.fr33styler.botcreator.Main</plugin.main.classpath>
-
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <build>
-        <finalName>${plugin.name}-${project.version}</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.6.1</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
-                    <minimizeJar>true</minimizeJar>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.5.0</version>
-                <configuration>
-                    <archive>
-                        <addMavenDescriptor>false</addMavenDescriptor>
-                        <manifest>
-                            <mainClass>${plugin.main.classpath}</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
         <dependency>
-            <groupId>org.geysermc.mcprotocollib</groupId>
-            <artifactId>protocol</artifactId>
-            <version>1.21.11-SNAPSHOT</version>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.2.10.Final</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.cloudburstmc</groupId>
+            <artifactId>nbt</artifactId>
+            <version>3.0.0.Final</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
-
 
 </project>
