@@ -14,4 +14,4 @@ Usage:
 5. Press connect
 6. Run any command you want
 
-That's it, have fun! :D
+That's it, have fun!
