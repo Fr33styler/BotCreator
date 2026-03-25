@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/Fr33styler/BotCreator/compare/v2.0.0...v2.0.1) (2026-03-25)
+
+
+### Bug Fixes
+
+* Minified jar quite a bit ([cc1dd47](https://github.com/Fr33styler/BotCreator/commit/cc1dd4762b3171838ecc93f96cf618d94a80be9c))
+
 ## [2.0.0](https://github.com/Fr33styler/BotCreator/compare/1.21.11...v2.0.0) (2026-03-25)
 
 
