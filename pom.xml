@@ -38,6 +38,18 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport</artifactId>
+            <version>4.2.10.Final</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-resolver</artifactId>
+            <version>4.2.10.Final</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>org.cloudburstmc</groupId>
             <artifactId>nbt</artifactId>
             <version>3.0.0.Final</version>
