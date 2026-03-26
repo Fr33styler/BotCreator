@@ -14,6 +14,6 @@ public interface Bot {
 
     void connect(EventLoopGroup workerGroup, String host, int port);
 
-    void disconnect();
+    void disconnect(String reason);
 
 }

@@ -18,7 +18,7 @@ public class ByteBufUtil {
     private static final int SEGMENT_BITS = 0x7F;
     private static final int CONTINUE_BIT = 0x80;
     private static final byte[] TEXT_START = { '"', 't', 'e', 'x', 't', '"', ':' };
-    private static final byte[] ARRAY_TEXT_START = {'"', 'e', 'x', 't', 'r', 'a', '"', ':'};
+    private static final byte[] EXTRA_START = {'"', 'e', 'x', 't', 'r', 'a', '"', ':'};
     private static final Pattern UNICODE_PATTERN = Pattern.compile("\\\\u([0-9A-Fa-f]{4})");
 
     private ByteBufUtil() {}
@@ -71,7 +71,7 @@ public class ByteBufUtil {
         buf.readBytes(array);
 
         if (array[1] == '"') {
-            builder.append(readStringFromJson(array, 2));
+            readStringFromJson(array, 2, builder);
         } else {
             readTextFromJson(array, 0, builder);
         }
@@ -82,34 +82,38 @@ public class ByteBufUtil {
     private static int readTextFromJson(byte[] array, int index, StringBuilder builder) {
         for (int i = index; i < array.length; i++) {
             if (array[i] == '}') {
-                return i + 1;
-            }
-            if (i > 7 && array[i] == ':' && isMatching(array, i + 1, TEXT_START)) {
-                builder.append(readStringFromJson(array, i + 2));
-            }
-            if (i > 8 && array[0] == '.' && array[i] == '[' && isMatching(array, i, ARRAY_TEXT_START)) {
-                boolean append = true;
-                for (int j = i + 2; j < array.length; j++) {
+                return i;
+            } else if (array[i] == ':' && isMatching(array, i + 1, TEXT_START)) {
+                i = readStringFromJson(array, i + 2, builder);
+            } else if (array[i] == '[' && isMatching(array, i, EXTRA_START)) {
+                boolean skip = false;
+                boolean append = false;
+                for (int j = i + 1; j < array.length; j++) {
                     byte character = array[j];
                     if (character == ']') {
-                        i = j + 1;
+                        i = j;
                         break;
                     }
-                    if (character == '"') {
+                    if (character == '\\') {
+                        skip = true;
+                    } else if (!skip && character == '"') {
                         append = !append;
                     } else if (append) {
+                        skip = false;
                         builder.append((char) character);
+                    } else if (character == '{') {
+                        i = j = readTextFromJson(array, j + 1, builder);
                     }
                 }
-            }
-            if (array[i] == '{') {
+            } else if (array[i] == '{') {
                 i = readTextFromJson(array, i + 1, builder);
             }
         }
-        return 0;
+        return index;
     }
 
     private static boolean isMatching(byte[] array, int index, byte[] characters) {
+        if (index < characters.length) return false;
         for (int i = 0; i < characters.length; i++) {
             if (characters[i] != array[index + i - characters.length]) {
                 return false;
@@ -127,13 +131,20 @@ public class ByteBufUtil {
         return text;
     }
 
-    private static String readStringFromJson(byte[] array, int index) {
+    private static int readStringFromJson(byte[] array, int index, StringBuilder builder) {
+        boolean skip = false;
         for (int i = index; i < array.length; i++) {
-            if (array[i] == '"') {
-                return new String(Arrays.copyOfRange(array, index, i));
+            byte character = array[i];
+            if (character == '\\') {
+                skip = true;
+            } else if (!skip && character == '"') {
+                return i;
+            } else {
+                skip = false;
+                builder.append((char) character);
             }
         }
-        return "";
+        return index;
     }
 
     public static UUID readUuid(ByteBuf byteBuf) {

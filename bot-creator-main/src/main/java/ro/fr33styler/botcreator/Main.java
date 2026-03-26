@@ -161,7 +161,7 @@ public class Main {
             }
             while (bots.size() > amount) {
                 Bot bot = bots.removeLast();
-                bot.disconnect();
+                bot.disconnect("You left the server!");
                 botsBox.removeItem(bot.getName());
             }
             for (Bot client : bots) {

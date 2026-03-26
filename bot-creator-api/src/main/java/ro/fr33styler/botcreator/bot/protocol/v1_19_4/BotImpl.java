@@ -75,15 +75,18 @@ public class BotImpl implements Bot {
 
         ChannelFuture channelFuture = bootstrap.connect(host, port);
 
-        channelFuture.syncUninterruptibly();
-
-        channel = channelFuture.channel();
+        try {
+            channelFuture.syncUninterruptibly();
+            channel = channelFuture.channel();
+        } catch (Exception exception) {
+            logger.log(Level.WARNING, "Disconnected: {0}",  exception.getMessage());
+        }
     }
 
     @Override
-    public void disconnect() {
+    public void disconnect(String reason) {
         channel.disconnect();
-        logger.log(Level.INFO, "Disconnected: You left the server!");
+        logger.log(Level.INFO, "Disconnected: {0}", reason);
     }
 
 }
