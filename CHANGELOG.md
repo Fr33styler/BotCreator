@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/Fr33styler/BotCreator/compare/v2.0.1...v2.0.2) (2026-03-26)
+
+
+### Bug Fixes
+
+* Now it'll tell the reason in case you couldn't connect ([f943a5a](https://github.com/Fr33styler/BotCreator/commit/f943a5a9031ee5f6535cbdb464523dd737dd5b4f))
+
 ## [2.0.1](https://github.com/Fr33styler/BotCreator/compare/v2.0.0...v2.0.1) (2026-03-25)
 
 
