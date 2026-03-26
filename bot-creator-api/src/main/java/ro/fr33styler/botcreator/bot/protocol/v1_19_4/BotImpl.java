@@ -9,8 +9,8 @@ import ro.fr33styler.botcreator.bot.protocol.ClientOptions;
 import ro.fr33styler.botcreator.bot.protocol.coder.PacketDecoder;
 import ro.fr33styler.botcreator.bot.protocol.coder.PacketEncoder;
 import ro.fr33styler.botcreator.bot.protocol.v1_19_4.packet.ClientHandler;
-import ro.fr33styler.botcreator.bot.protocol.v1_19_4.packet.packets.play.ServerBoundChat;
-import ro.fr33styler.botcreator.bot.protocol.v1_19_4.packet.packets.play.ServerBoundChatCommand;
+import ro.fr33styler.botcreator.bot.protocol.v1_19_4.packet.packets.play.ServerBoundChatPacket;
+import ro.fr33styler.botcreator.bot.protocol.v1_19_4.packet.packets.play.ServerBoundChatCommandPacket;
 import ro.fr33styler.botcreator.bot.protocol.v1_19_4.packet.packets.StageType;
 
 import java.time.Instant;
@@ -44,14 +44,14 @@ public class BotImpl implements Bot {
     @Override
     public void sendMessage(String message) {
         if (isOnline()) {
-            channel.writeAndFlush(new ServerBoundChat(message, Instant.now().toEpochMilli(), 0L, null, 0, EMPTY_BYTE_SET));
+            channel.writeAndFlush(new ServerBoundChatPacket(message, Instant.now().toEpochMilli(), 0L, null, 0, EMPTY_BYTE_SET));
         }
     }
 
     @Override
     public void executeCommand(String command) {
         if (isOnline()) {
-            channel.writeAndFlush(new ServerBoundChatCommand(command, Instant.now().toEpochMilli(), 0L, null, 0, EMPTY_BYTE_SET));
+            channel.writeAndFlush(new ServerBoundChatCommandPacket(command, Instant.now().toEpochMilli(), 0L, null, 0, EMPTY_BYTE_SET));
         }
     }
 

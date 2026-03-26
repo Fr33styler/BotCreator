@@ -15,9 +15,9 @@ public class StageLogin implements Stage {
     private final Map<Integer, Function<ByteBuf, Packet>> packets = new HashMap<>();
 
     public StageLogin() {
-        packets.put(0x00, LoginDisconnect::new);
-        packets.put(0x02, LoginSuccessPacket::new);
-        packets.put(0x03, SetCompressPacket::new);
+        packets.put(0x00, ClientBoundLoginDisconnectPacket::new);
+        packets.put(0x02, ClientBoundLoginSuccessPacket::new);
+        packets.put(0x03, ClientBoundSetCompressPacket::new);
     }
 
     @Override

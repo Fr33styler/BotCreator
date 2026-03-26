@@ -15,9 +15,9 @@ public class StagePlay implements Stage {
     private final Map<Integer, Function<ByteBuf, Packet>> packets = new HashMap<>();
 
     public StagePlay() {
-        packets.put(0x40, PlayDisconnect::new);
+        packets.put(0x40, ClientBoundPlayDisconnectPacket::new);
         packets.put(0x00, ClientBoundKeepAlivePacket::new);
-        packets.put(0x02, ClientBoundSystemChatMessage::new);
+        packets.put(0x02, ClientBoundSystemChatMessagePacket::new);
     }
 
     @Override

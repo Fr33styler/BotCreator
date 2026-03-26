@@ -15,10 +15,10 @@ public class StagePlay implements Stage {
     private final Map<Integer, Function<ByteBuf, Packet>> packets = new HashMap<>();
 
     public StagePlay() {
-        packets.put(0x1A, PlayDisconnect::new);
+        packets.put(0x1A, ClientBoundPlayDisconnectPacket::new);
         packets.put(0x23, ClientBoundKeepAlivePacket::new);
-        packets.put(0x3C, SynchronizePlayerPositionPacket::new);
-        packets.put(0x64, ClientBoundSystemChatMessage::new);
+        packets.put(0x3C, ClientBoundSynchronizePlayerPositionPacket::new);
+        packets.put(0x64, ClientBoundSystemChatMessagePacket::new);
     }
 
     @Override

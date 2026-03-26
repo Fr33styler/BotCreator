@@ -15,8 +15,8 @@ public class StageConfiguration implements Stage {
     private final Map<Integer, Function<ByteBuf, Packet>> packets = new HashMap<>();
 
     public StageConfiguration() {
-        packets.put(0x02, ConfigurationDisconnect::new);
-        packets.put(0x03, FinishConfiguration::new);
+        packets.put(0x02, ClientBoundConfigurationDisconnectPacket::new);
+        packets.put(0x03, ClientBoundFinishConfigurationPacket::new);
         packets.put(0x0E, ClientBoundSelectKnownPacksPacket::new);
     }
 

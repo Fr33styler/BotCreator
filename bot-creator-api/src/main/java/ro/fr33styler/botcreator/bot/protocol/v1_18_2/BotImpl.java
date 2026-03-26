@@ -9,7 +9,7 @@ import ro.fr33styler.botcreator.bot.protocol.ClientOptions;
 import ro.fr33styler.botcreator.bot.protocol.coder.PacketDecoder;
 import ro.fr33styler.botcreator.bot.protocol.coder.PacketEncoder;
 import ro.fr33styler.botcreator.bot.protocol.v1_18_2.packet.ClientHandler;
-import ro.fr33styler.botcreator.bot.protocol.v1_18_2.packet.packets.play.ServerBoundChat;
+import ro.fr33styler.botcreator.bot.protocol.v1_18_2.packet.packets.play.ServerBoundChatPacket;
 import ro.fr33styler.botcreator.bot.protocol.v1_18_2.packet.packets.StageType;
 
 import java.util.logging.Level;
@@ -39,7 +39,7 @@ public class BotImpl implements Bot {
     @Override
     public void sendMessage(String message) {
         if (isOnline()) {
-            channel.writeAndFlush(new ServerBoundChat(message));
+            channel.writeAndFlush(new ServerBoundChatPacket(message));
         }
     }
 

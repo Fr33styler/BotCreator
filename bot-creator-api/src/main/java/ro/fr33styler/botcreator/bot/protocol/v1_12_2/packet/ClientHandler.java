@@ -5,10 +5,10 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import ro.fr33styler.botcreator.bot.protocol.ClientOptions;
 import ro.fr33styler.botcreator.bot.protocol.v1_12_2.packet.packets.StageType;
 import ro.fr33styler.botcreator.bot.protocol.v1_12_2.packet.packets.common.AbstractDisconnectPacket;
-import ro.fr33styler.botcreator.bot.protocol.v1_12_2.packet.packets.handshake.HandshakePacket;
-import ro.fr33styler.botcreator.bot.protocol.v1_12_2.packet.packets.login.LoginStartPacket;
-import ro.fr33styler.botcreator.bot.protocol.v1_12_2.packet.packets.login.LoginSuccessPacket;
-import ro.fr33styler.botcreator.bot.protocol.v1_12_2.packet.packets.login.SetCompressPacket;
+import ro.fr33styler.botcreator.bot.protocol.v1_12_2.packet.packets.handshake.ServerBoundHandshakePacket;
+import ro.fr33styler.botcreator.bot.protocol.v1_12_2.packet.packets.login.ServerBoundLoginStartPacket;
+import ro.fr33styler.botcreator.bot.protocol.v1_12_2.packet.packets.login.ClientBoundLoginSuccessPacket;
+import ro.fr33styler.botcreator.bot.protocol.v1_12_2.packet.packets.login.ClientBoundSetCompressPacket;
 import ro.fr33styler.botcreator.bot.protocol.v1_12_2.packet.packets.play.*;
 
 import java.util.logging.Level;
@@ -23,8 +23,8 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        ctx.writeAndFlush(new HandshakePacket(340, options.getHost(), options.getPort(), 2));
-        ctx.writeAndFlush(new LoginStartPacket(options.getName()));
+        ctx.writeAndFlush(new ServerBoundHandshakePacket(340, options.getHost(), options.getPort(), 2));
+        ctx.writeAndFlush(new ServerBoundLoginStartPacket(options.getName()));
         super.channelActive(ctx);
     }
 
@@ -37,24 +37,24 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         }
 
         //Login start
-        if (msg instanceof SetCompressPacket) {
+        if (msg instanceof ClientBoundSetCompressPacket) {
             options.setCompressed(true);
-            options.setMaximumPacketSize(((SetCompressPacket) msg).getMaximumPacketSize());
+            options.setMaximumPacketSize(((ClientBoundSetCompressPacket) msg).getMaximumPacketSize());
         }
-        if (msg instanceof LoginSuccessPacket) {
+        if (msg instanceof ClientBoundLoginSuccessPacket) {
             options.setStage(StageType.PLAY_STAGE);
         }
         //Login end
 
         //Play Start
-        if (msg instanceof SynchronizePlayerPositionPacket) {
-            ctx.writeAndFlush(new ConfirmTeleportation(((SynchronizePlayerPositionPacket) msg).getTeleportId()));
+        if (msg instanceof ClientBoundSynchronizePlayerPositionPacket) {
+            ctx.writeAndFlush(new ServerBoundConfirmTeleportationPacket(((ClientBoundSynchronizePlayerPositionPacket) msg).getTeleportId()));
         }
         if (msg instanceof ClientBoundKeepAlivePacket) {
             ctx.writeAndFlush(new ServerBoundKeepAlivePacket(((ClientBoundKeepAlivePacket) msg).getKeepAliveId()));
         }
-        if (msg instanceof ClientBoundSystemChatMessage) {
-            ClientBoundSystemChatMessage packet = (ClientBoundSystemChatMessage) msg;
+        if (msg instanceof ClientBoundSystemChatMessagePacket) {
+            ClientBoundSystemChatMessagePacket packet = (ClientBoundSystemChatMessagePacket) msg;
             if (!packet.isActionMessage() && !packet.getMessage().isEmpty()) {
                 options.getLogger().log(Level.INFO, "Received Message: {0}", packet.getMessage());
             }
