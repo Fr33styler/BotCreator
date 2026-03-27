@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/Fr33styler/BotCreator/compare/v2.1.0...v2.1.1) (2026-03-27)
+
+
+### Bug Fixes
+
+* Refactored classes and improved logic ([e2d0b8b](https://github.com/Fr33styler/BotCreator/commit/e2d0b8b660b205c4479801211db8b5065d112807))
+
 ## [2.1.0](https://github.com/Fr33styler/BotCreator/compare/v2.0.2...v2.1.0) (2026-03-26)
 
 
