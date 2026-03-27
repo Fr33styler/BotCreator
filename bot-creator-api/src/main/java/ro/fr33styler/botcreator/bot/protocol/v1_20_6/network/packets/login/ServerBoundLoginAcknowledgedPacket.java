@@ -1,0 +1,16 @@
+package ro.fr33styler.botcreator.bot.protocol.v1_20_6.network.packets.login;
+
+import io.netty.buffer.ByteBuf;
+import ro.fr33styler.botcreator.bot.protocol.Packet;
+
+public class ServerBoundLoginAcknowledgedPacket implements Packet {
+
+    @Override
+    public int getId() {
+        return 0x03;
+    }
+
+    @Override
+    public void encode(ByteBuf out) {}
+
+}

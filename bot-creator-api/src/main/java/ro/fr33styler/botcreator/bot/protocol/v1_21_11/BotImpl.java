@@ -8,10 +8,10 @@ import ro.fr33styler.botcreator.bot.Bot;
 import ro.fr33styler.botcreator.bot.protocol.ClientOptions;
 import ro.fr33styler.botcreator.bot.protocol.coder.PacketDecoder;
 import ro.fr33styler.botcreator.bot.protocol.coder.PacketEncoder;
-import ro.fr33styler.botcreator.bot.protocol.v1_21_11.packet.ClientHandler;
-import ro.fr33styler.botcreator.bot.protocol.v1_21_11.packet.packets.StageType;
-import ro.fr33styler.botcreator.bot.protocol.v1_21_11.packet.packets.play.ServerBoundChatPacket;
-import ro.fr33styler.botcreator.bot.protocol.v1_21_11.packet.packets.play.ServerBoundChatCommandPacket;
+import ro.fr33styler.botcreator.bot.protocol.v1_21_11.network.ClientHandler;
+import ro.fr33styler.botcreator.bot.protocol.v1_21_11.network.packets.StageType;
+import ro.fr33styler.botcreator.bot.protocol.v1_21_11.network.packets.play.ServerBoundChatPacket;
+import ro.fr33styler.botcreator.bot.protocol.v1_21_11.network.packets.play.ServerBoundChatCommandPacket;
 
 import java.time.Instant;
 import java.util.BitSet;
@@ -73,13 +73,13 @@ public class BotImpl implements Bot {
 
         });
 
-        ChannelFuture channelFuture = bootstrap.connect(host, port);
-
         try {
+            ChannelFuture channelFuture = bootstrap.connect(host, port);
+
             channelFuture.syncUninterruptibly();
             channel = channelFuture.channel();
         } catch (Exception exception) {
-            logger.log(Level.WARNING, "Disconnected: {0}",  exception.getMessage());
+            logger.log(Level.WARNING, "Disconnected: {0}", exception.getMessage());
         }
     }
 

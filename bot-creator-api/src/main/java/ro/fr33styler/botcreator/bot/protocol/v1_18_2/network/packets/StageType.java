@@ -1,0 +1,14 @@
+package ro.fr33styler.botcreator.bot.protocol.v1_18_2.network.packets;
+
+import ro.fr33styler.botcreator.bot.protocol.Stage;
+import ro.fr33styler.botcreator.bot.protocol.v1_18_2.network.packets.login.StageLogin;
+import ro.fr33styler.botcreator.bot.protocol.v1_18_2.network.packets.play.StagePlay;
+
+public class StageType {
+
+    public static final Stage LOGIN_STAGE = new StageLogin();
+    public static final Stage PLAY_STAGE = new StagePlay();
+
+    private StageType() {}
+
+}
