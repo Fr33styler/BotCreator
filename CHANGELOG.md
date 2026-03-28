@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.1.2](https://github.com/Fr33styler/BotCreator/compare/v2.1.1...v2.1.2) (2026-03-28)
+
+
+### Bug Fixes
+
+* Now the bots will auto respawn upon death ([3cda403](https://github.com/Fr33styler/BotCreator/commit/3cda403219195194e9ff218a9c9e788919ae93f3))
+* Now the bots will join the server anyway if a resource pack is present ([3cda403](https://github.com/Fr33styler/BotCreator/commit/3cda403219195194e9ff218a9c9e788919ae93f3))
+* Now the client will disconnect and announce it if the server is in online mode. ([3cda403](https://github.com/Fr33styler/BotCreator/commit/3cda403219195194e9ff218a9c9e788919ae93f3))
+* Removed get System look and feel to hopefully fix issues on windows ([35cb6c0](https://github.com/Fr33styler/BotCreator/commit/35cb6c041485b1b75a0732dc95c7ad8796f7bd58))
+
 ## [2.1.1](https://github.com/Fr33styler/BotCreator/compare/v2.1.0...v2.1.1) (2026-03-27)
 
 
