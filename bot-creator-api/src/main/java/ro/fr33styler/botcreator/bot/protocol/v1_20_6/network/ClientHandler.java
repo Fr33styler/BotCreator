@@ -10,11 +10,10 @@ import ro.fr33styler.botcreator.bot.protocol.v1_20_6.network.packets.configurati
 import ro.fr33styler.botcreator.bot.protocol.v1_20_6.network.packets.configuration.ClientBoundFinishConfigurationPacket;
 import ro.fr33styler.botcreator.bot.protocol.v1_20_6.network.packets.configuration.ServerBoundSelectKnownPacksPacket;
 import ro.fr33styler.botcreator.bot.protocol.v1_20_6.network.packets.handshake.ServerBoundHandshakePacket;
-import ro.fr33styler.botcreator.bot.protocol.v1_20_6.network.packets.login.ServerBoundLoginAcknowledgedPacket;
-import ro.fr33styler.botcreator.bot.protocol.v1_20_6.network.packets.login.ServerBoundLoginStartPacket;
-import ro.fr33styler.botcreator.bot.protocol.v1_20_6.network.packets.login.ClientBoundLoginFinishedPacket;
-import ro.fr33styler.botcreator.bot.protocol.v1_20_6.network.packets.login.ClientBoundLoginCompressionPacket;
+import ro.fr33styler.botcreator.bot.protocol.v1_20_6.network.packets.login.*;
 import ro.fr33styler.botcreator.bot.protocol.v1_20_6.network.packets.play.*;
+import ro.fr33styler.botcreator.bot.protocol.v1_20_6.network.packets.configuration.ClientBoundResourcePackPushPacket;
+import ro.fr33styler.botcreator.bot.protocol.v1_20_6.network.packets.configuration.ServerBoundResourcePackPacket;
 
 import java.util.logging.Level;
 
@@ -42,9 +41,17 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         }
 
         //Login start
+        if (msg instanceof ClientBoundLoginOnlineModePacket) {
+            ctx.channel().disconnect();
+            options.getLogger().log(Level.INFO, "Disconnected: The server is in online mode!");
+            return;
+        }
         if (msg instanceof ClientBoundLoginCompressionPacket) {
             options.setCompressed(true);
             options.setMaximumPacketSize(((ClientBoundLoginCompressionPacket) msg).getMaximumPacketSize());
+        }
+        if (msg instanceof ClientBoundResourcePackPushPacket) {
+            ctx.writeAndFlush(new ServerBoundResourcePackPacket(((ClientBoundResourcePackPushPacket) msg).getUniqueId()));
         }
         if (msg instanceof ClientBoundLoginFinishedPacket) {
             options.setStage(StageType.CONFIGURATION_STAGE);
@@ -59,6 +66,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         if (msg instanceof ClientBoundFinishConfigurationPacket) {
             options.setStage(StageType.PLAY_STAGE);
             ctx.writeAndFlush(new ServerBoundFinishConfigurationPacket());
+            ctx.writeAndFlush(new ServerBoundRespawnPacket());
         }
         //Configuration End
 
@@ -68,6 +76,12 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         }
         if (msg instanceof ClientBoundKeepAlivePacket) {
             ctx.writeAndFlush(new ServerBoundKeepAlivePacket(((ClientBoundKeepAlivePacket) msg).getKeepAliveId()));
+        }
+        if (msg instanceof ClientBoundRespawnScreenPacket) {
+            ctx.writeAndFlush(new ServerBoundRespawnPacket());
+        }
+        if (msg instanceof ClientBoundResourcePackPushPlayPacket) {
+            ctx.writeAndFlush(new ServerBoundResourcePackPlayPacket(((ClientBoundResourcePackPushPlayPacket) msg).getUniqueId()));
         }
         if (msg instanceof ClientBoundSystemChatPacket) {
             ClientBoundSystemChatPacket packet = (ClientBoundSystemChatPacket) msg;

@@ -16,6 +16,7 @@ public class StageLogin implements Stage {
 
     public StageLogin() {
         packets.put(0x00, ClientBoundLoginDisconnectPacket::new);
+        packets.put(0x01, ClientBoundLoginOnlineModePacket::new);
         packets.put(0x02, ClientBoundLoginFinishedPacketPacket::new);
         packets.put(0x03, ClientBoundLoginCompressionPacketPacket::new);
     }

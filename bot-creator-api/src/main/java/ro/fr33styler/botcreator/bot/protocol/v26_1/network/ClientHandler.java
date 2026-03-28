@@ -5,15 +5,9 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import ro.fr33styler.botcreator.bot.protocol.ClientOptions;
 import ro.fr33styler.botcreator.bot.protocol.v26_1.network.packets.StageType;
 import ro.fr33styler.botcreator.bot.protocol.v26_1.network.packets.common.AbstractDisconnectPacket;
-import ro.fr33styler.botcreator.bot.protocol.v26_1.network.packets.configuration.ServerBoundFinishConfigurationPacket;
-import ro.fr33styler.botcreator.bot.protocol.v26_1.network.packets.configuration.ClientBoundSelectKnownPacksPacket;
-import ro.fr33styler.botcreator.bot.protocol.v26_1.network.packets.configuration.ClientBoundFinishConfigurationPacket;
-import ro.fr33styler.botcreator.bot.protocol.v26_1.network.packets.configuration.ServerBoundSelectKnownPacksPacket;
+import ro.fr33styler.botcreator.bot.protocol.v26_1.network.packets.configuration.*;
 import ro.fr33styler.botcreator.bot.protocol.v26_1.network.packets.handshake.ServerBoundHandshakePacket;
-import ro.fr33styler.botcreator.bot.protocol.v26_1.network.packets.login.ServerBoundLoginAcknowledgedPacket;
-import ro.fr33styler.botcreator.bot.protocol.v26_1.network.packets.login.ServerBoundLoginStartPacket;
-import ro.fr33styler.botcreator.bot.protocol.v26_1.network.packets.login.ClientBoundLoginFinishedPacketPacket;
-import ro.fr33styler.botcreator.bot.protocol.v26_1.network.packets.login.ClientBoundLoginCompressionPacketPacket;
+import ro.fr33styler.botcreator.bot.protocol.v26_1.network.packets.login.*;
 import ro.fr33styler.botcreator.bot.protocol.v26_1.network.packets.play.*;
 
 import java.util.logging.Level;
@@ -41,10 +35,18 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
             options.getLogger().log(Level.INFO, "Disconnected: {0}", ((AbstractDisconnectPacket) msg).getReason());
         }
 
-        //Login start
+        //Login
+        if (msg instanceof ClientBoundLoginOnlineModePacket) {
+            ctx.channel().disconnect();
+            options.getLogger().log(Level.INFO, "Disconnected: The server is in online mode!");
+            return;
+        }
         if (msg instanceof ClientBoundLoginCompressionPacketPacket) {
             options.setCompressed(true);
             options.setMaximumPacketSize(((ClientBoundLoginCompressionPacketPacket) msg).getMaximumPacketSize());
+        }
+        if (msg instanceof ClientBoundResourcePackPushPacket) {
+            ctx.writeAndFlush(new ServerBoundResourcePackPacket(((ClientBoundResourcePackPushPacket) msg).getUniqueId()));
         }
         if (msg instanceof ClientBoundLoginFinishedPacketPacket) {
             options.setStage(StageType.CONFIGURATION_STAGE);
@@ -59,6 +61,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         if (msg instanceof ClientBoundFinishConfigurationPacket) {
             options.setStage(StageType.PLAY_STAGE);
             ctx.writeAndFlush(new ServerBoundFinishConfigurationPacket());
+            ctx.writeAndFlush(new ServerBoundRespawnPacket());
         }
         //Configuration End
 
@@ -68,6 +71,12 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         }
         if (msg instanceof ClientBoundKeepAlivePacket) {
             ctx.writeAndFlush(new ServerBoundKeepAlivePacket(((ClientBoundKeepAlivePacket) msg).getKeepAliveId()));
+        }
+        if (msg instanceof ClientBoundRespawnScreenPacket) {
+            ctx.writeAndFlush(new ServerBoundRespawnPacket());
+        }
+        if (msg instanceof ClientBoundResourcePackPushPlayPacket) {
+            ctx.writeAndFlush(new ServerBoundResourcePackPlayPacket(((ClientBoundResourcePackPushPlayPacket) msg).getUniqueId()));
         }
         if (msg instanceof ClientBoundSystemChatPacket) {
             ClientBoundSystemChatPacket packet = (ClientBoundSystemChatPacket) msg;

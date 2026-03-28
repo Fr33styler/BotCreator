@@ -3,6 +3,7 @@ package ro.fr33styler.botcreator.bot.protocol.v1_8_9.network;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import ro.fr33styler.botcreator.bot.protocol.ClientOptions;
+import ro.fr33styler.botcreator.bot.protocol.v1_8_9.network.packets.login.ClientBoundLoginOnlineModePacket;
 import ro.fr33styler.botcreator.bot.protocol.v1_8_9.network.packets.StageType;
 import ro.fr33styler.botcreator.bot.protocol.v1_8_9.network.packets.common.AbstractDisconnectPacket;
 import ro.fr33styler.botcreator.bot.protocol.v1_8_9.network.packets.handshake.ServerBoundHandshakePacket;
@@ -37,18 +38,30 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         }
 
         //Login start
+        if (msg instanceof ClientBoundLoginOnlineModePacket) {
+            ctx.channel().disconnect();
+            options.getLogger().log(Level.INFO, "Disconnected: The server is in online mode!");
+            return;
+        }
         if (msg instanceof ClientBoundLoginCompressionPacket) {
             options.setCompressed(true);
             options.setMaximumPacketSize(((ClientBoundLoginCompressionPacket) msg).getMaximumPacketSize());
         }
         if (msg instanceof ClientBoundLoginFinishedPacket) {
             options.setStage(StageType.PLAY_STAGE);
+            ctx.writeAndFlush(new ServerBoundRespawnPacket());
         }
         //Login end
 
         //Play Start
         if (msg instanceof ClientBoundKeepAlivePacket) {
             ctx.writeAndFlush(new ServerBoundKeepAlivePacket(((ClientBoundKeepAlivePacket) msg).getKeepAliveId()));
+        }
+        if (msg instanceof ClientBoundRespawnScreenPacket && ((ClientBoundRespawnScreenPacket) msg).isDead()) {
+            ctx.writeAndFlush(new ServerBoundRespawnPacket());
+        }
+        if (msg instanceof ClientBoundResourcePackPushPacket) {
+            ctx.writeAndFlush(new ServerBoundResourcePackPacket(((ClientBoundResourcePackPushPacket) msg).getHash()));
         }
         if (msg instanceof ClientBoundSystemChatPacket) {
             ClientBoundSystemChatPacket packet = (ClientBoundSystemChatPacket) msg;

@@ -36,9 +36,17 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         }
 
         //Login start
+        if (msg instanceof ClientBoundLoginOnlineModePacket) {
+            ctx.channel().disconnect();
+            options.getLogger().log(Level.INFO, "Disconnected: The server is in online mode!");
+            return;
+        }
         if (msg instanceof ClientBoundLoginCompressionPacket) {
             options.setCompressed(true);
             options.setMaximumPacketSize(((ClientBoundLoginCompressionPacket) msg).getMaximumPacketSize());
+        }
+        if (msg instanceof ClientBoundResourcePackPushPacket) {
+            ctx.writeAndFlush(new ServerBoundResourcePackPacket(((ClientBoundResourcePackPushPacket) msg).getUniqueId()));
         }
         if (msg instanceof ClientBoundLoginFinishedPacket) {
             options.setStage(StageType.CONFIGURATION_STAGE);
@@ -53,6 +61,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         if (msg instanceof ClientBoundFinishConfigurationPacket) {
             options.setStage(StageType.PLAY_STAGE);
             ctx.writeAndFlush(new ServerBoundFinishConfigurationPacket());
+            ctx.writeAndFlush(new ServerBoundRespawnPacket());
         }
         //Configuration End
 
@@ -62,6 +71,12 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         }
         if (msg instanceof ClientBoundKeepAlivePacket) {
             ctx.writeAndFlush(new ServerBoundKeepAlivePacket(((ClientBoundKeepAlivePacket) msg).getKeepAliveId()));
+        }
+        if (msg instanceof ClientBoundRespawnScreenPacket) {
+            ctx.writeAndFlush(new ServerBoundRespawnPacket());
+        }
+        if (msg instanceof ClientBoundResourcePackPushPlayPacket) {
+            ctx.writeAndFlush(new ServerBoundResourcePackPlayPacket(((ClientBoundResourcePackPushPlayPacket) msg).getUniqueId()));
         }
         if (msg instanceof ClientBoundSystemChatPacket) {
             ClientBoundSystemChatPacket packet = (ClientBoundSystemChatPacket) msg;

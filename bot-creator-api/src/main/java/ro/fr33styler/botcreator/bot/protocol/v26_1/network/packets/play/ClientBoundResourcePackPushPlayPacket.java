@@ -4,21 +4,23 @@ import io.netty.buffer.ByteBuf;
 import ro.fr33styler.botcreator.bot.protocol.ByteBufUtil;
 import ro.fr33styler.botcreator.bot.protocol.Packet;
 
-public class ClientBoundPlayerPositionPacket implements Packet {
+import java.util.UUID;
 
-    private final int teleportId;
+public class ClientBoundResourcePackPushPlayPacket implements Packet {
 
-    public ClientBoundPlayerPositionPacket(ByteBuf in) {
-        teleportId = ByteBufUtil.readVarInt(in);
+    private final UUID uniqueId;
+
+    public ClientBoundResourcePackPushPlayPacket(ByteBuf in) {
+        uniqueId = ByteBufUtil.readUuid(in);
     }
 
     @Override
     public int getId() {
-        return 0x48;
+        return 0x51;
     }
 
-    public int getTeleportId() {
-        return teleportId;
+    public UUID getUniqueId() {
+        return uniqueId;
     }
 
     @Override

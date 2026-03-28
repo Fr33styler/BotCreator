@@ -156,6 +156,10 @@ public class ByteBufUtil {
         byteBuf.writeLong(uniqueId.getLeastSignificantBits());
     }
 
+    public static String readString(ByteBuf byteBuf) {
+        return byteBuf.readString(ByteBufUtil.readVarInt(byteBuf), StandardCharsets.UTF_8);
+    }
+
     public static void writeString(ByteBuf byteBuf, String string) {
         ByteBufUtil.writeVarInt(byteBuf, string.length());
         byteBuf.writeCharSequence(string, StandardCharsets.UTF_8);

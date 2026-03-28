@@ -6,6 +6,7 @@ import ro.fr33styler.botcreator.bot.protocol.ClientOptions;
 import ro.fr33styler.botcreator.bot.protocol.v1_12_2.network.packets.StageType;
 import ro.fr33styler.botcreator.bot.protocol.v1_12_2.network.packets.common.AbstractDisconnectPacket;
 import ro.fr33styler.botcreator.bot.protocol.v1_12_2.network.packets.handshake.ServerBoundHandshakePacket;
+import ro.fr33styler.botcreator.bot.protocol.v1_12_2.network.packets.login.ClientBoundLoginOnlineModePacket;
 import ro.fr33styler.botcreator.bot.protocol.v1_12_2.network.packets.login.ServerBoundLoginStartPacket;
 import ro.fr33styler.botcreator.bot.protocol.v1_12_2.network.packets.login.ClientBoundLoginFinishedPacket;
 import ro.fr33styler.botcreator.bot.protocol.v1_12_2.network.packets.login.ClientBoundLoginCompressionPacket;
@@ -37,12 +38,18 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         }
 
         //Login start
+        if (msg instanceof ClientBoundLoginOnlineModePacket) {
+            ctx.channel().disconnect();
+            options.getLogger().log(Level.INFO, "Disconnected: The server is in online mode!");
+            return;
+        }
         if (msg instanceof ClientBoundLoginCompressionPacket) {
             options.setCompressed(true);
             options.setMaximumPacketSize(((ClientBoundLoginCompressionPacket) msg).getMaximumPacketSize());
         }
         if (msg instanceof ClientBoundLoginFinishedPacket) {
             options.setStage(StageType.PLAY_STAGE);
+            ctx.writeAndFlush(new ServerBoundRespawnPacket());
         }
         //Login end
 
@@ -52,6 +59,12 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         }
         if (msg instanceof ClientBoundKeepAlivePacket) {
             ctx.writeAndFlush(new ServerBoundKeepAlivePacket(((ClientBoundKeepAlivePacket) msg).getKeepAliveId()));
+        }
+        if (msg instanceof ClientBoundRespawnScreenPacket && ((ClientBoundRespawnScreenPacket) msg).isDead()) {
+            ctx.writeAndFlush(new ServerBoundRespawnPacket());
+        }
+        if (msg instanceof ClientBoundResourcePackPushPacket) {
+            ctx.writeAndFlush(new ServerBoundResourcePackPacket());
         }
         if (msg instanceof ClientBoundSystemChatPacket) {
             ClientBoundSystemChatPacket packet = (ClientBoundSystemChatPacket) msg;

@@ -17,6 +17,7 @@ public class StageConfiguration implements Stage {
     public StageConfiguration() {
         packets.put(0x02, ClientBoundConfigurationDisconnectPacket::new);
         packets.put(0x03, ClientBoundFinishConfigurationPacket::new);
+        packets.put(0x09, ClientBoundResourcePackPushPacket::new);
         packets.put(0x0E, ClientBoundSelectKnownPacksPacket::new);
     }
 
