@@ -1,0 +1,19 @@
+package ro.fr33styler.botcreator.bot.protocol.v1_19_4.network.packets.play;
+
+import io.netty.buffer.ByteBuf;
+import ro.fr33styler.botcreator.bot.protocol.ByteBufUtil;
+import ro.fr33styler.botcreator.bot.protocol.Packet;
+
+public class ServerBoundResourcePackPacket implements Packet {
+
+    @Override
+    public int getId() {
+        return 0x24;
+    }
+
+    @Override
+    public void encode(ByteBuf out) {
+        ByteBufUtil.writeVarInt(out, 0);
+    }
+
+}
