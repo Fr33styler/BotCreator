@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.2.0](https://github.com/Fr33styler/BotCreator/compare/v2.1.2...v2.2.0) (2026-03-28)
+
+
+### Features
+
+* Now you can run the bot creator via the command line! ([0f55abe](https://github.com/Fr33styler/BotCreator/commit/0f55abef19fd8edbcc97b3f82e8054d0b43f635a))
+
+
+### Bug Fixes
+
+* Fixed a compilation issue ([e5841d5](https://github.com/Fr33styler/BotCreator/commit/e5841d581c2453cd12a823d9bb7bee493b24ba25))
+
 ## [2.1.2](https://github.com/Fr33styler/BotCreator/compare/v2.1.1...v2.1.2) (2026-03-28)
 
 
