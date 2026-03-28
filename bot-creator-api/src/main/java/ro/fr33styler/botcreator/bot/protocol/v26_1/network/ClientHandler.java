@@ -32,13 +32,13 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
         //Common
         if (msg instanceof AbstractDisconnectPacket) {
-            options.getLogger().log(Level.INFO, "Disconnected: {0}", ((AbstractDisconnectPacket) msg).getReason());
+            options.getLogger().info("Disconnected: {0}", ((AbstractDisconnectPacket) msg).getReason());
         }
 
         //Login
         if (msg instanceof ClientBoundLoginOnlineModePacket) {
             ctx.channel().disconnect();
-            options.getLogger().log(Level.INFO, "Disconnected: The server is in online mode!");
+            options.getLogger().info("Disconnected: The server is in online mode!");
             return;
         }
         if (msg instanceof ClientBoundLoginCompressionPacketPacket) {

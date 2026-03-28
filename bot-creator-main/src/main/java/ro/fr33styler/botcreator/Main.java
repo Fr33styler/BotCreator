@@ -4,16 +4,12 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.MultiThreadIoEventLoopGroup;
 import io.netty.channel.nio.NioIoHandler;
 import ro.fr33styler.botcreator.bot.Bot;
-import ro.fr33styler.botcreator.bot.protocol.ProtocolVersion;
-import ro.fr33styler.botcreator.logger.LogHandler;
+import ro.fr33styler.botcreator.arguments.Arguments;
+import ro.fr33styler.botcreator.gui.Gui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
+import java.util.*;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,160 +18,71 @@ public class Main {
 
     public static final Logger LOGGER = Logger.getLogger("BotCreator");
 
-    private static final Deque<Bot> bots = new ArrayDeque<>();
-
     public static void main(String[] args) {
 
-        JFrame frame = new JFrame("BotCreator");
+        EventLoopGroup workerGroup = new MultiThreadIoEventLoopGroup(NioIoHandler.newFactory());
+        if (args.length > 0) {
+            Arguments arguments;
+            List<Bot> bots = new ArrayList<>();
 
-        frame.setResizable(false);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            try {
+                arguments = Arguments.parse(args);
+            } catch (IllegalArgumentException exception) {
+                LOGGER.severe(exception.getMessage());
+                return;
+            }
 
-        //Bottom
-        JPanel bottomPanel = new JPanel();
+            LOGGER.info("Bot Creator has started!");
 
-        JComboBox<String> botsBox = new JComboBox<>();
-        botsBox.addItem("All");
-        bottomPanel.add(botsBox);
+            for (int i = 0; i < arguments.getClients(); i++) {
+                String name = "Bot_" + (i + 1);
+                Logger botLogger = Logger.getLogger(name);
+                botLogger.setParent(LOGGER);
+                Bot bot = arguments.getVersion().getProtocol().newBot(botLogger, name);
+                bot.connect(workerGroup, arguments.getHost(), arguments.getPort());
+                if (bot.isOnline()) {
+                    bots.add(bot);
+                }
+            }
 
-        JTextField sendInput = new JTextField("/", 64);
-        bottomPanel.add(sendInput);
-
-        sendInput.addKeyListener(new KeyAdapter() {
-
-            private int position = 0;
-            private final List<String> history = new ArrayList<>();
-
-            @Override
-            public void keyPressed(KeyEvent event) {
-                if (event.getKeyCode() == KeyEvent.VK_UP && position > 0) {
-                    sendInput.setText(history.get(--position));
-                } else if (event.getKeyCode() == KeyEvent.VK_DOWN && position < history.size()) {
-                    sendInput.setText(position + 1 == history.size() ? "/" : history.get(++position));
-                } else if (event.getKeyCode() == KeyEvent.VK_ENTER) {
-                    String selected = (String) botsBox.getSelectedItem();
-
-                    String text = sendInput.getText();
+            if (bots.isEmpty()) {
+                LOGGER.severe("All of the bots failed to connect, closing!");
+                workerGroup.shutdownGracefully();
+            } else {
+                Scanner scanner = new Scanner(System.in);
+                while (true) {
+                    String message = scanner.nextLine();
+                    if (message.equalsIgnoreCase("quit") || message.equalsIgnoreCase("exit")) {
+                        break;
+                    }
                     for (Bot bot : bots) {
-                        if (selected == null || selected.equals("All") || selected.equals(bot.getName())) {
-                            if (text.startsWith("/")) {
-                                bot.executeCommand(text.substring(1));
-                            } else {
-                                bot.sendMessage(text);
-                            }
+                        if (message.startsWith("/")) {
+                            bot.executeCommand(message);
+                        } else {
+                            bot.sendMessage(message);
                         }
                     }
-                    history.remove(text);
-                    history.add(text);
-
-                    sendInput.setText("/");
-                    position = history.size();
                 }
             }
+        } else {
 
-        });
+            JFrame frame = new JFrame("BotCreator");
 
-        frame.add(bottomPanel, BorderLayout.PAGE_END);
+            frame.setResizable(false);
+            frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        //Center
-        JScrollPane centerPane = new JScrollPane();
-        centerPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        centerPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+            Gui gui = new Gui(LOGGER);
 
-        JTextArea logArea = new JTextArea(10, 80);
-        logArea.setEditable(false);
-        centerPane.getViewport().setView(logArea);
+            frame.add(gui.getTopPanel(workerGroup), BorderLayout.PAGE_START);
+            frame.add(gui.getCenterPanel(), BorderLayout.CENTER);
+            frame.add(gui.getBottomPanel(), BorderLayout.PAGE_END);
 
-        LOGGER.addHandler(new LogHandler(logArea));
+            frame.pack();
+            frame.setVisible(true);
 
-        frame.add(centerPane, BorderLayout.CENTER);
-
-        //Top
-        JPanel topPanel = new JPanel();
-
-        topPanel.add(new JLabel("Host: "));
-
-        JTextField hostInput = new JTextField("127.0.0.1", 10);
-        topPanel.add(hostInput);
-
-        topPanel.add(new JLabel("Port: "));
-        JTextField portInput = new JTextField("25565", 5);
-        topPanel.add(portInput);
-
-        topPanel.add(new JLabel("Clients: "));
-
-        JTextField clientsInput = new JTextField("1", 3);
-        topPanel.add(clientsInput);
-
-        JComboBox<String> versionsBox = new JComboBox<>();
-        for (ProtocolVersion version : ProtocolVersion.values()) {
-            versionsBox.addItem(version.getVersion());
+            Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> LOGGER.log(Level.SEVERE, throwable.getMessage(), throwable));
+            LOGGER.info("Bot Creator has started!");
         }
-        topPanel.add(versionsBox);
-
-        JButton connect = new JButton("Connect");
-        topPanel.add(connect);
-
-        EventLoopGroup workerGroup = new MultiThreadIoEventLoopGroup(NioIoHandler.newFactory());
-
-        connect.addActionListener(action -> {
-
-            int port;
-            try {
-                port = Integer.parseInt(portInput.getText());
-            } catch (NumberFormatException exception) {
-                LOGGER.log(Level.SEVERE, "The port must be a number!");
-                return;
-            }
-
-            int amount;
-            try {
-                amount = Integer.parseInt(clientsInput.getText());
-            } catch (NumberFormatException exception) {
-                LOGGER.log(Level.SEVERE, "The number of clients must be a number!");
-                return;
-            }
-
-            if (amount < 0) {
-                LOGGER.log(Level.SEVERE, "The number of clients must be 0 or higher!");
-                return;
-            }
-
-            connect.setEnabled(false);
-            connect.setText("Connecting...");
-
-            String host = hostInput.getText();
-
-            while (bots.size() < amount) {
-                int id = bots.size();
-
-                ProtocolVersion version = ProtocolVersion.getByVersion((String) versionsBox.getSelectedItem());
-                Logger logger = Logger.getLogger("Bot_" + id);
-                logger.setParent(LOGGER);
-                bots.addLast(version.getProtocol().newBot(logger, "Bot_" + id));
-                botsBox.addItem("Bot_" + id);
-            }
-            while (bots.size() > amount) {
-                Bot bot = bots.removeLast();
-                bot.disconnect("You left the server!");
-                botsBox.removeItem(bot.getName());
-            }
-            for (Bot client : bots) {
-                if (!client.isOnline()) {
-                    client.connect(workerGroup, host, port);
-                }
-            }
-            connect.setText("Connect");
-            connect.setEnabled(true);
-        });
-
-        frame.add(topPanel, BorderLayout.PAGE_START);
-
-        frame.pack();
-        frame.setVisible(true);
-
-        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> LOGGER.log(Level.SEVERE, throwable.getMessage(), throwable));
-        LOGGER.info("Bot Creator has started!");
     }
 
 }

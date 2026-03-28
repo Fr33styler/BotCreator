@@ -43,7 +43,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         //Login start
         if (msg instanceof ClientBoundLoginOnlineModePacket) {
             ctx.channel().disconnect();
-            options.getLogger().log(Level.INFO, "Disconnected: The server is in online mode!");
+            options.getLogger().info("Disconnected: The server is in online mode!");
             return;
         }
         if (msg instanceof ClientBoundLoginCompressionPacket) {
