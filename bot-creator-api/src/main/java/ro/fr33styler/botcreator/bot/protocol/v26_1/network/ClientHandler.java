@@ -32,7 +32,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
         //Common
         if (msg instanceof AbstractDisconnectPacket) {
-            options.getLogger().info("Disconnected: {0}", ((AbstractDisconnectPacket) msg).getReason());
+            options.getLogger().log(Level.INFO, "Disconnected: {0}", ((AbstractDisconnectPacket) msg).getReason());
         }
 
         //Login
