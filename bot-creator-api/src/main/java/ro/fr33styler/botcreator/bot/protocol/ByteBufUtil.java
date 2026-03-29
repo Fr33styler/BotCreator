@@ -7,6 +7,7 @@ import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -65,28 +66,26 @@ public class ByteBufUtil {
     }
 
     public static String readTextFromJson(ByteBuf buf) {
-        StringBuilder builder = new StringBuilder();
-
-        byte[] array = new byte[buf.readableBytes()];
+        byte[] array = new byte[readVarInt(buf)];
         buf.readBytes(array);
 
-        if (array[1] == '"') {
-            readStringFromJson(array, 2, builder);
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        if (array[0] == '"') {
+            readStringFromJson(array, 1, buffer);
         } else {
-            readTextFromJson(array, 0, builder);
+            readTextFromJson(array, 0, buffer);
         }
 
-        return transformUnicode(builder.toString());
+        return transformUnicode(new String(buffer.toByteArray(), StandardCharsets.UTF_8));
     }
 
-    private static int readTextFromJson(byte[] array, int index, StringBuilder builder) {
+    private static int readTextFromJson(byte[] array, int index, ByteArrayOutputStream buffer) {
         for (int i = index; i < array.length; i++) {
             if (array[i] == '}') {
                 return i;
             } else if (array[i] == ':' && isMatching(array, i + 1, TEXT_START)) {
-                i = readStringFromJson(array, i + 2, builder);
+                i = readStringFromJson(array, i + 2, buffer);
             } else if (array[i] == '[' && isMatching(array, i, EXTRA_START)) {
-                boolean skip = false;
                 boolean append = false;
                 for (int j = i + 1; j < array.length; j++) {
                     byte character = array[j];
@@ -94,19 +93,16 @@ public class ByteBufUtil {
                         i = j;
                         break;
                     }
-                    if (character == '\\') {
-                        skip = true;
-                    } else if (!skip && character == '"') {
+                    if (character == '"' && (j == 0 || array[j - 1] != '\\')) {
                         append = !append;
                     } else if (append) {
-                        skip = false;
-                        builder.append((char) character);
+                        buffer.write(character);
                     } else if (character == '{') {
-                        i = j = readTextFromJson(array, j + 1, builder);
+                        i = j = readTextFromJson(array, j + 1, buffer);
                     }
                 }
             } else if (array[i] == '{') {
-                i = readTextFromJson(array, i + 1, builder);
+                i = readTextFromJson(array, i + 1, buffer);
             }
         }
         return index;
@@ -122,6 +118,18 @@ public class ByteBufUtil {
         return true;
     }
 
+    private static int readStringFromJson(byte[] array, int index, ByteArrayOutputStream buffer) {
+        for (int i = index; i < array.length; i++) {
+            byte character = array[i];
+            if (character == '"' && (i == 0 || array[i - 1] != '\\')) {
+                return i;
+            } else {
+                buffer.write(character);
+            }
+        }
+        return index;
+    }
+
     private static String transformUnicode(String text) {
         Matcher matcher = UNICODE_PATTERN.matcher(text);
         while (matcher.find()) {
@@ -129,22 +137,6 @@ public class ByteBufUtil {
             text = text.replace("\\u" + group, String.valueOf((char) Integer.parseInt(group, 16)));
         }
         return text;
-    }
-
-    private static int readStringFromJson(byte[] array, int index, StringBuilder builder) {
-        boolean skip = false;
-        for (int i = index; i < array.length; i++) {
-            byte character = array[i];
-            if (character == '\\') {
-                skip = true;
-            } else if (!skip && character == '"') {
-                return i;
-            } else {
-                skip = false;
-                builder.append((char) character);
-            }
-        }
-        return index;
     }
 
     public static UUID readUuid(ByteBuf byteBuf) {

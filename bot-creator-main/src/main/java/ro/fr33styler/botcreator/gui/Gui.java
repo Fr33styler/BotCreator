@@ -6,7 +6,6 @@ import ro.fr33styler.botcreator.bot.protocol.ProtocolVersion;
 import ro.fr33styler.botcreator.logger.LogHandler;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.logging.Logger;
@@ -45,10 +44,11 @@ public class Gui {
         topPanel.add(versionsBox);
 
         JButton connect = new JButton("Connect");
-        topPanel.add(connect);
 
-        connect.addActionListener(event -> new ConnectListener(logger, bots, workerGroup,
+        connect.addActionListener(new ConnectListener(logger, bots, workerGroup,
                 hostInput, portInput, clientsInput, versionsBox, connect, botsBox));
+
+        topPanel.add(connect);
 
         return topPanel;
     }

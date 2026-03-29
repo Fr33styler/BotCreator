@@ -5,6 +5,7 @@ import ro.fr33styler.botcreator.bot.protocol.v1_18_2.v1_18_2;
 import ro.fr33styler.botcreator.bot.protocol.v1_19_4.v1_19_4;
 import ro.fr33styler.botcreator.bot.protocol.v1_20_6.v1_20_6;
 import ro.fr33styler.botcreator.bot.protocol.v1_21_11.v1_21_11;
+import ro.fr33styler.botcreator.bot.protocol.v1_7_10.v1_7_10;
 import ro.fr33styler.botcreator.bot.protocol.v1_8_9.v1_8_9;
 import ro.fr33styler.botcreator.bot.protocol.v26_1.v26_1;
 
@@ -20,7 +21,8 @@ public enum ProtocolVersion {
     V1_19_4("1.19.4", v1_19_4::new),
     V1_18_2("1.18.2", v1_18_2::new),
     V1_12_2("1.12.2", v1_12_2::new),
-    V1_8_9("1.8.9", v1_8_9::new);
+    V1_8_9("1.8.9", v1_8_9::new),
+    V1_7_10("1.7.10", v1_7_10::new);
 
     private static final Map<String, ProtocolVersion> PROTOCOL_VERSIONS = new HashMap<>();
 

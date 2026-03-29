@@ -8,7 +8,6 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Deque;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ConnectListener implements ActionListener {
@@ -40,7 +39,7 @@ public class ConnectListener implements ActionListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent event) {
+    public void actionPerformed(ActionEvent action) {
         int port;
         try {
             port = Integer.parseInt(portInput.getText());

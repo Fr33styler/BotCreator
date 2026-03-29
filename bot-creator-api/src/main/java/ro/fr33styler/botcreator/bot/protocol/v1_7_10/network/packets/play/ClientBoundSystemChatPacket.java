@@ -1,38 +1,24 @@
-package ro.fr33styler.botcreator.bot.protocol.v1_18_2.network.packets.play;
+package ro.fr33styler.botcreator.bot.protocol.v1_7_10.network.packets.play;
 
 import io.netty.buffer.ByteBuf;
-import ro.fr33styler.botcreator.bot.protocol.Packet;
 import ro.fr33styler.botcreator.bot.protocol.ByteBufUtil;
-
-import java.util.UUID;
+import ro.fr33styler.botcreator.bot.protocol.Packet;
 
 public class ClientBoundSystemChatPacket implements Packet {
 
     private final String message;
-    private final int messageType;
-    private final UUID uniqueId;
 
     public ClientBoundSystemChatPacket(ByteBuf in) {
         message = ByteBufUtil.readTextFromJson(in);
-        messageType = in.readByte();
-        uniqueId = ByteBufUtil.readUuid(in);
     }
 
     @Override
     public int getId() {
-        return 0x0F;
+        return 0x02;
     }
 
     public String getMessage() {
         return message;
-    }
-
-    public boolean isActionMessage() {
-        return messageType > 1;
-    }
-
-    public UUID getUniqueId() {
-        return uniqueId;
     }
 
     @Override

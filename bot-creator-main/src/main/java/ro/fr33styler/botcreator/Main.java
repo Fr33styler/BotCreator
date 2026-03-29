@@ -28,6 +28,7 @@ public class Main {
             try {
                 arguments = Arguments.parse(args);
             } catch (IllegalArgumentException exception) {
+                workerGroup.shutdownGracefully();
                 LOGGER.severe(exception.getMessage());
                 return;
             }
@@ -46,8 +47,8 @@ public class Main {
             }
 
             if (bots.isEmpty()) {
-                LOGGER.severe("All of the bots failed to connect, closing!");
                 workerGroup.shutdownGracefully();
+                LOGGER.severe("All of the bots failed to connect, closing!");
             } else {
                 Scanner scanner = new Scanner(System.in);
                 while (true) {

@@ -2,6 +2,7 @@ package ro.fr33styler.botcreator.arguments;
 
 import ro.fr33styler.botcreator.bot.protocol.ProtocolVersion;
 
+import java.util.StringJoiner;
 import java.util.function.Consumer;
 
 public class Arguments {
@@ -10,7 +11,7 @@ public class Arguments {
     private int port = 25565;
 
     private int clients = 1;
-    private ProtocolVersion version = ProtocolVersion.V26_1;
+    private ProtocolVersion version = ProtocolVersion.values()[0];
 
     public String getHost() {
         return host;
@@ -74,7 +75,13 @@ public class Arguments {
             case "-v":
                 return argument -> {
                     ProtocolVersion protocolVersion = ProtocolVersion.getByVersion(argument);
-                    if (protocolVersion == null) throw new IllegalArgumentException("Invalid version!");
+                    if (protocolVersion == null) {
+                        StringJoiner joiner = new StringJoiner(", ", "", ".");
+                        for (ProtocolVersion version : ProtocolVersion.values()) {
+                            joiner.add(version.getVersion());
+                        }
+                        throw new IllegalArgumentException("Invalid version! Valid versions are: " + joiner);
+                    }
 
                     arguments.version = protocolVersion;
                 };

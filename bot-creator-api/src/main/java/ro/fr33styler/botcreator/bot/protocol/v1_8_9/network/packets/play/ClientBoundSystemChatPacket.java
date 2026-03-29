@@ -10,7 +10,7 @@ public class ClientBoundSystemChatPacket implements Packet {
     private final int messageType;
 
     public ClientBoundSystemChatPacket(ByteBuf in) {
-        message = ByteBufUtil.readTextFromJson(in.readBytes(in.readableBytes() - 1));
+        message = ByteBufUtil.readTextFromJson(in);
         messageType = in.readByte();
     }
 
