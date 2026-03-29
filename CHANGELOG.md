@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.3.0](https://github.com/Fr33styler/BotCreator/compare/v2.2.0...v2.3.0) (2026-03-29)
+
+
+### Features
+
+* Added 1.7.10 support ([ea59b2a](https://github.com/Fr33styler/BotCreator/commit/ea59b2a67a742a27fb3185e14ab08279288714e1))
+
+
+### Bug Fixes
+
+* Fixed json to use the length prefix instead of yolo it ([ea59b2a](https://github.com/Fr33styler/BotCreator/commit/ea59b2a67a742a27fb3185e14ab08279288714e1))
+* Now if the bots fail to join in command line the program will end ([ea59b2a](https://github.com/Fr33styler/BotCreator/commit/ea59b2a67a742a27fb3185e14ab08279288714e1))
+
 ## [2.2.0](https://github.com/Fr33styler/BotCreator/compare/v2.1.2...v2.2.0) (2026-03-28)
 
 
