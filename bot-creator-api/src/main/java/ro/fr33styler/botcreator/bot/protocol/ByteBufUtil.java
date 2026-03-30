@@ -32,37 +32,33 @@ public class ByteBufUtil {
                 return null;
             } else {
                 NbtType<?> type = NbtType.byId(typeId);
-                return transformUnicode(readTextFromNBT((new NBTInputStream(input)).readValue(type, 512)));
+                StringBuilder builder = new StringBuilder();
+                readTextFromNBT((new NBTInputStream(input)).readValue(type, 512), builder);
+                return transformUnicode(builder.toString());
             }
         } catch (IOException exception) {
             throw new IllegalArgumentException(exception);
         }
     }
 
-    private static String readTextFromNBT(Object tag) {
-        String current = "";
-        if (tag instanceof NbtMap) {
-            NbtMap map = (NbtMap) tag;
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
-                Object value = entry.getValue();
-                if (entry.getKey().isEmpty()) {
-                    current = current.concat(readTextFromNBT(value));
-                }
-                if (entry.getKey().equals("text")) {
-                    current = current.concat(readTextFromNBT(value));
-                }
-                if (entry.getKey().equals("extra")) {
-                    if (value instanceof NbtList) {
-                        for (Object element : (NbtList<?>) value) {
-                            current = current.concat(readTextFromNBT(element));
-                        }
-                    }
+    private static void readTextFromNBT(Object tag, StringBuilder builder) {
+        if (tag instanceof String) {
+            builder.append((String) tag);
+        } else if (tag instanceof NbtList) {
+            for (Object element : (NbtList<?>) tag) {
+                readTextFromNBT(element, builder);
+            }
+        } else if (tag instanceof NbtMap) {
+            for (Map.Entry<String, Object> entry : ((NbtMap) tag).entrySet()) {
+                switch (entry.getKey()) {
+                    case "":
+                    case "text":
+                    case "extra":
+                        readTextFromNBT(entry.getValue(), builder);
+                        break;
                 }
             }
-        } else if (tag instanceof String) {
-            current = (String) tag;
         }
-        return current;
     }
 
     public static String readTextFromJson(ByteBuf buf) {
@@ -83,9 +79,9 @@ public class ByteBufUtil {
         for (int i = index; i < array.length; i++) {
             if (array[i] == '}') {
                 return i;
-            } else if (array[i] == ':' && isMatching(array, i + 1, TEXT_START)) {
+            } else if (array[i] == ':' && endsAtWith(array, i + 1, TEXT_START)) {
                 i = readStringFromJson(array, i + 2, buffer);
-            } else if (array[i] == '[' && isMatching(array, i, EXTRA_START)) {
+            } else if (array[i] == '[' && endsAtWith(array, i, EXTRA_START)) {
                 boolean append = false;
                 for (int j = i + 1; j < array.length; j++) {
                     byte character = array[j];
@@ -108,16 +104,6 @@ public class ByteBufUtil {
         return index;
     }
 
-    private static boolean isMatching(byte[] array, int index, byte[] characters) {
-        if (index < characters.length) return false;
-        for (int i = 0; i < characters.length; i++) {
-            if (characters[i] != array[index + i - characters.length]) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     private static int readStringFromJson(byte[] array, int index, ByteArrayOutputStream buffer) {
         for (int i = index; i < array.length; i++) {
             byte character = array[i];
@@ -128,6 +114,16 @@ public class ByteBufUtil {
             }
         }
         return index;
+    }
+
+    private static boolean endsAtWith(byte[] array, int index, byte[] characters) {
+        if (index < characters.length) return false;
+        for (int i = 0; i < characters.length; i++) {
+            if (characters[i] != array[index + i - characters.length]) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static String transformUnicode(String text) {
