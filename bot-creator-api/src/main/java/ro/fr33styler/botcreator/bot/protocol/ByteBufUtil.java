@@ -43,7 +43,7 @@ public class ByteBufUtil {
 
     private static void readTextFromNBT(Object tag, StringBuilder builder) {
         if (tag instanceof String) {
-            builder.append((String) tag);
+            builder.append(tag);
         } else if (tag instanceof NbtList) {
             for (Object element : (NbtList<?>) tag) {
                 readTextFromNBT(element, builder);
@@ -88,8 +88,7 @@ public class ByteBufUtil {
                     if (character == ']') {
                         i = j;
                         break;
-                    }
-                    if (character == '"' && (j == 0 || array[j - 1] != '\\')) {
+                    } else if (character == '"' && (j == 0 || array[j - 1] != '\\')) {
                         append = !append;
                     } else if (append) {
                         buffer.write(character);
