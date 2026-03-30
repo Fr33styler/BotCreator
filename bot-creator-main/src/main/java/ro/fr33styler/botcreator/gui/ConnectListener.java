@@ -66,6 +66,7 @@ public class ConnectListener implements ActionListener {
 
         String host = hostInput.getText();
 
+        bots.removeIf(bot -> !bot.isOnline());
         while (bots.size() < amount) {
             int id = bots.size();
 
