@@ -67,6 +67,10 @@ public class Main {
             }
         } else {
 
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (Exception ignored) {}
+
             JFrame frame = new JFrame("BotCreator");
 
             frame.setResizable(false);
