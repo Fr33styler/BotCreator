@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.1](https://github.com/Fr33styler/BotCreator/compare/v2.3.0...v2.3.1) (2026-03-30)
+
+
+### Bug Fixes
+
+* Improved the performance of the nbt string parser ([eb72a01](https://github.com/Fr33styler/BotCreator/commit/eb72a01baa15999eef16fad8537d3c9adf34ffdd))
+
 ## [2.3.0](https://github.com/Fr33styler/BotCreator/compare/v2.2.0...v2.3.0) (2026-03-29)
 
 
