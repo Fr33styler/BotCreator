@@ -45,9 +45,6 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
             options.setCompressed(true);
             options.setMaximumPacketSize(((ClientBoundLoginCompressionPacket) msg).getMaximumPacketSize());
         }
-        if (msg instanceof ClientBoundResourcePackPushPacket) {
-            ctx.writeAndFlush(new ServerBoundResourcePackPacket(((ClientBoundResourcePackPushPacket) msg).getUniqueId()));
-        }
         if (msg instanceof ClientBoundLoginFinishedPacket) {
             options.setStage(StageType.CONFIGURATION_STAGE);
             ctx.writeAndFlush(new ServerBoundLoginAcknowledgedPacket());
@@ -57,6 +54,9 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         //Configuration Start
         if (msg instanceof ClientBoundSelectKnownPacksPacket) {
             ctx.writeAndFlush(new ServerBoundSelectKnownPacksPacket());
+        }
+        if (msg instanceof ClientBoundResourcePackPushPacket) {
+            ctx.writeAndFlush(new ServerBoundResourcePackPacket(((ClientBoundResourcePackPushPacket) msg).getUniqueId()));
         }
         if (msg instanceof ClientBoundFinishConfigurationPacket) {
             options.setStage(StageType.PLAY_STAGE);
