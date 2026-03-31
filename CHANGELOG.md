@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.3.2](https://github.com/Fr33styler/BotCreator/compare/v2.3.1...v2.3.2) (2026-03-31)
+
+
+### Bug Fixes
+
+* Brought back the system look and feel to bring back dark mode for linux since this didn't fix an issue for a specific user having issues with the ui ([8cf0d09](https://github.com/Fr33styler/BotCreator/commit/8cf0d09c2c01bdf7aab73f725a47ee9a08cb2899))
+* Now switching versions won't prevent bots from joining the sever ([60c5356](https://github.com/Fr33styler/BotCreator/commit/60c5356090ca2c906c176e1516ead55159b24f50))
+
 ## [2.3.1](https://github.com/Fr33styler/BotCreator/compare/v2.3.0...v2.3.1) (2026-03-30)
 
 
