@@ -67,6 +67,7 @@ public class Main {
             }
         } else {
 
+            System.setProperty("sun.java2d.noddraw", "true");
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } catch (Exception ignored) {}

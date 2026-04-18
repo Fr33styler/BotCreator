@@ -17,6 +17,7 @@ public class StagePlay implements Stage {
     public StagePlay() {
         packets.put(0x1D, ClientBoundPlayDisconnectPacket::new);
         packets.put(0x26, ClientBoundKeepAlivePacket::new);
+        packets.put(0x3C, ClientBoundRespawnScreenPacket::new);
         packets.put(0x40, ClientBoundPlayerPositionPacket::new);
         packets.put(0x46, ClientBoundResourcePackPushPlayPacket::new);
         packets.put(0x6C, ClientBoundSystemChatPacket::new);

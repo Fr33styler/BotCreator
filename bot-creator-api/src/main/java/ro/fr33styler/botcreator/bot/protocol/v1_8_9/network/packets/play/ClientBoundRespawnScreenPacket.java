@@ -18,7 +18,7 @@ public class ClientBoundRespawnScreenPacket implements Packet {
     }
 
     public boolean isDead() {
-        return status == 2;
+        return status == 1;
     }
 
     @Override
