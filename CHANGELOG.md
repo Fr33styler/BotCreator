@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.3.3](https://github.com/Fr33styler/BotCreator/compare/v2.3.2...v2.3.3) (2026-04-18)
+
+
+### Bug Fixes
+
+* Fixed an issue on 1.8.8 where the respawn wouldn't work due to triggering at wrong status ([9706c76](https://github.com/Fr33styler/BotCreator/commit/9706c76120058535579cfca52f86cd84fadc234c))
+* Fixed an issue on Windows where the interface would glitch out due to direct draw ([9706c76](https://github.com/Fr33styler/BotCreator/commit/9706c76120058535579cfca52f86cd84fadc234c))
+* Now 1.20.6 and 1.21.11 will respawn the bots upon death ([9706c76](https://github.com/Fr33styler/BotCreator/commit/9706c76120058535579cfca52f86cd84fadc234c))
+
 ## [2.3.2](https://github.com/Fr33styler/BotCreator/compare/v2.3.1...v2.3.2) (2026-03-31)
 
 
