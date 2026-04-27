@@ -60,22 +60,11 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
             ClientBoundSystemChatPacket packet = (ClientBoundSystemChatPacket) msg;
             if (!packet.getMessage().isEmpty()) {
                 options.getLogger().log(Level.INFO, "Received Message: {0}", packet.getMessage());
-                respawnIfDeathMessage(ctx, packet.getMessage());
             }
         }
 
         //Play End
         super.channelRead(ctx, msg);
-    }
-
-    private void respawnIfDeathMessage(ChannelHandlerContext ctx, String message) {
-        String lower = message.toLowerCase();
-        if (lower.contains("overwhelmed by") || lower.contains("slain by") || lower.contains("died")
-                || lower.contains("fell from") || lower.contains("drowned") || lower.contains("suffocated")
-                || lower.contains("burned to death") || lower.contains("blew up")) {
-            options.getLogger().info("Death detected, respawning now.");
-            ctx.writeAndFlush(new ServerBoundRespawnPacket());
-        }
     }
 
 }

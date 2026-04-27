@@ -20,6 +20,7 @@ public class Main {
 
     public static final Logger LOGGER = Logger.getLogger("BotCreator");
     private static final long LOGIN_TIMEOUT_MS = 30000L;
+    private static final long CONNECT_TIMEOUT_MS = 5000L;
 
     public static void main(String[] args) {
         EventLoopGroup workerGroup = new MultiThreadIoEventLoopGroup(NioIoHandler.newFactory());
@@ -113,8 +114,7 @@ public class Main {
                     }
 
                     allLoggedIn = false;
-                    connectOnce(bot, workerGroup, host, port, retryDelay);
-                    if (!sleep(joinDelay)) {
+                    if (!connectOnce(bot, workerGroup, host, port, retryDelay) || !sleep(joinDelay)) {
                         return;
                     }
                 }
@@ -153,13 +153,17 @@ public class Main {
         }
     }
 
-    private static void connectOnce(Bot bot, EventLoopGroup workerGroup, String host, int port, int retryDelay) {
+    private static boolean connectOnce(Bot bot, EventLoopGroup workerGroup, String host, int port, int retryDelay) {
         if (!bot.isOnline()) {
             bot.connect(workerGroup, host, port);
         }
 
         if (waitForLogin(bot, LOGIN_TIMEOUT_MS)) {
-            return;
+            return true;
+        }
+
+        if (Thread.currentThread().isInterrupted()) {
+            return false;
         }
 
         LOGGER.warning(bot.getName() + " did not finish logging in, retrying later...");
@@ -167,7 +171,7 @@ public class Main {
             bot.disconnect("Retrying login");
         }
 
-        sleep(retryDelay);
+        return sleep(retryDelay);
     }
 
     private static boolean sleep(int delay) {
@@ -184,20 +188,25 @@ public class Main {
     }
 
     private static boolean waitForLogin(Bot bot, long timeoutMs) {
-        long deadline = System.currentTimeMillis() + timeoutMs;
-        while (System.currentTimeMillis() < deadline) {
+        long now = System.currentTimeMillis();
+        long deadline = now + timeoutMs;
+        long connectDeadline = now + CONNECT_TIMEOUT_MS;
+        boolean wasOnline = false;
+
+        while (now < deadline) {
             if (bot.isLoggedIn()) {
                 return true;
             }
-            if (!bot.isOnline()) {
+            if (bot.isOnline()) {
+                wasOnline = true;
+            } else if (wasOnline || now >= connectDeadline) {
                 return false;
             }
-            try {
-                Thread.sleep(50L);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+
+            if (!sleep(50)) {
                 return false;
             }
+            now = System.currentTimeMillis();
         }
         return bot.isLoggedIn();
     }
