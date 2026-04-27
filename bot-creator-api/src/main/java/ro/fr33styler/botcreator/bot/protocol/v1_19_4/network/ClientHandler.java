@@ -49,6 +49,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         }
         if (msg instanceof ClientBoundLoginFinishedPacket) {
             options.setStage(StageType.PLAY_STAGE);
+            options.setLoggedIn(true);
             ctx.writeAndFlush(new ServerBoundRespawnPacket());
         }
         //Login end

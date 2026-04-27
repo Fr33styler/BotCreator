@@ -20,6 +20,7 @@ public class BotImpl implements Bot {
     private Channel channel;
     private final Logger logger;
     private final String name;
+    private ClientOptions options;
 
     public BotImpl(Logger logger, String name) {
         this.logger = logger;
@@ -37,6 +38,11 @@ public class BotImpl implements Bot {
     }
 
     @Override
+    public boolean isLoggedIn() {
+        return options != null && options.isLoggedIn() && isOnline();
+    }
+
+    @Override
     public void sendMessage(String message) {
         if (isOnline()) {
             channel.writeAndFlush(new ServerBoundChatPacket(message));
@@ -51,13 +57,12 @@ public class BotImpl implements Bot {
     @Override
     public void connect(EventLoopGroup workerGroup, String host, int port) {
 
+        options = new ClientOptions(StageType.LOGIN_STAGE, logger, name, host, port);
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(workerGroup);
         bootstrap.channel(NioSocketChannel.class);
         bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
         bootstrap.handler(new ChannelInitializer<SocketChannel>() {
-
-            private final ClientOptions options = new ClientOptions(StageType.LOGIN_STAGE, logger, name, host, port);
 
             @Override
             public void initChannel(SocketChannel channel) {
@@ -78,7 +83,9 @@ public class BotImpl implements Bot {
 
     @Override
     public void disconnect(String reason) {
-        channel.disconnect();
+        if (channel != null) {
+            channel.disconnect();
+        }
         logger.log(Level.INFO, "Disconnected: {0}", reason);
     }
 

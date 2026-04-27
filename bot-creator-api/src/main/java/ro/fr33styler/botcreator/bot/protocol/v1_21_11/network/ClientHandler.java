@@ -60,6 +60,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         }
         if (msg instanceof ClientBoundFinishConfigurationPacket) {
             options.setStage(StageType.PLAY_STAGE);
+            options.setLoggedIn(true);
             ctx.writeAndFlush(new ServerBoundFinishConfigurationPacket());
             ctx.writeAndFlush(new ServerBoundRespawnPacket());
         }
