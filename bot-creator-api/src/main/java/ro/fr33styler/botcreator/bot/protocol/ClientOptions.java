@@ -14,6 +14,7 @@ public class ClientOptions {
     private Stage stage;
     private boolean compressed;
     private int maximumPacketSize;
+    private volatile boolean loggedIn;
 
     public ClientOptions(Stage stage, Logger logger, String name, String host, int port) {
         setStage(stage);
@@ -66,6 +67,14 @@ public class ClientOptions {
     public void setStage(Stage stage) {
         if (stage == null) throw new IllegalArgumentException("Stage cannot be null");
         this.stage = stage;
+    }
+
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
+
+    public void setLoggedIn(boolean loggedIn) {
+        this.loggedIn = loggedIn;
     }
 
 }

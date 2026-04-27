@@ -12,6 +12,8 @@ public class Arguments {
 
     private int clients = 1;
     private ProtocolVersion version = ProtocolVersion.values()[0];
+    private int joinDelay = 1000;
+    private int retryDelay = 3000;
 
     public String getHost() {
         return host;
@@ -27,6 +29,14 @@ public class Arguments {
 
     public ProtocolVersion getVersion() {
         return version;
+    }
+
+    public int getJoinDelay() {
+        return joinDelay;
+    }
+
+    public int getRetryDelay() {
+        return retryDelay;
     }
 
     public static Arguments parse(String[] args) throws IllegalArgumentException {
@@ -84,6 +94,26 @@ public class Arguments {
                     }
 
                     arguments.version = protocolVersion;
+                };
+            case "-join-delay":
+            case "-jd":
+                return argument -> {
+                    try {
+                        arguments.joinDelay = Integer.parseInt(argument);
+                        if (arguments.joinDelay < 0) throw new IllegalArgumentException("Join delay must be non-negative!");
+                    } catch (NumberFormatException exception) {
+                        throw new IllegalArgumentException("Invalid join delay number!");
+                    }
+                };
+            case "-retry-delay":
+            case "-rd":
+                return argument -> {
+                    try {
+                        arguments.retryDelay = Integer.parseInt(argument);
+                        if (arguments.retryDelay < 0) throw new IllegalArgumentException("Retry delay must be non-negative!");
+                    } catch (NumberFormatException exception) {
+                        throw new IllegalArgumentException("Invalid retry delay number!");
+                    }
                 };
             default: throw new IllegalArgumentException("The argument \"" + currentArgument + "\" is invalid!");
         }
