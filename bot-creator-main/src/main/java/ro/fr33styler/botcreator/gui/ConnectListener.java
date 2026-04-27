@@ -122,36 +122,54 @@ public class ConnectListener implements ActionListener {
     }
 
     private void startBotLauncher(String host, int port, int joinDelay, int retryDelay) {
-        for (Bot bot : bots) {
-            while (!bot.isLoggedIn()) {
-                if (!bot.isOnline()) {
-                    bot.connect(workerGroup, host, port);
-                }
-                if (waitForLogin(bot, LOGIN_TIMEOUT_MS)) {
-                    break;
+        while (!Thread.currentThread().isInterrupted()) {
+            boolean allLoggedIn = true;
+
+            for (Bot bot : bots) {
+                if (bot.isLoggedIn()) {
+                    continue;
                 }
 
-                logger.warning(bot.getName() + " did not finish logging in, retrying...");
-                if (bot.isOnline()) {
-                    bot.disconnect("Retrying login");
-                }
-
-                try {
-                    Thread.sleep(retryDelay);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+                allLoggedIn = false;
+                connectOnce(bot, host, port, retryDelay);
+                if (!sleep(joinDelay)) {
                     return;
                 }
             }
 
-            if (joinDelay > 0) {
-                try {
-                    Thread.sleep(joinDelay);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    return;
-                }
+            if (allLoggedIn && !sleep(Math.max(1000, retryDelay))) {
+                return;
             }
+        }
+    }
+
+    private void connectOnce(Bot bot, String host, int port, int retryDelay) {
+        if (!bot.isOnline()) {
+            bot.connect(workerGroup, host, port);
+        }
+
+        if (waitForLogin(bot, LOGIN_TIMEOUT_MS)) {
+            return;
+        }
+
+        logger.warning(bot.getName() + " did not finish logging in, retrying later...");
+        if (bot.isOnline()) {
+            bot.disconnect("Retrying login");
+        }
+
+        sleep(retryDelay);
+    }
+
+    private static boolean sleep(int delay) {
+        if (delay <= 0) {
+            return true;
+        }
+        try {
+            Thread.sleep(delay);
+            return true;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
         }
     }
 

@@ -96,40 +96,58 @@ public class Main {
 
     private static void startBotLauncher(Collection<Bot> bots, EventLoopGroup workerGroup, String host, int port, int joinDelay, int retryDelay) {
         Thread thread = new Thread(() -> {
-            for (Bot bot : bots) {
-                while (!bot.isLoggedIn()) {
-                    if (!bot.isOnline()) {
-                        bot.connect(workerGroup, host, port);
-                    }
-                    if (waitForLogin(bot, LOGIN_TIMEOUT_MS)) {
-                        break;
+            while (!Thread.currentThread().isInterrupted()) {
+                boolean allLoggedIn = true;
+
+                for (Bot bot : bots) {
+                    if (bot.isLoggedIn()) {
+                        continue;
                     }
 
-                    LOGGER.warning(bot.getName() + " did not finish logging in, retrying...");
-                    if (bot.isOnline()) {
-                        bot.disconnect("Retrying login");
-                    }
-
-                    try {
-                        Thread.sleep(retryDelay);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
+                    allLoggedIn = false;
+                    connectOnce(bot, workerGroup, host, port, retryDelay);
+                    if (!sleep(joinDelay)) {
                         return;
                     }
                 }
 
-                try {
-                    if (joinDelay > 0) {
-                        Thread.sleep(joinDelay);
-                    }
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+                if (allLoggedIn && !sleep(Math.max(1000, retryDelay))) {
                     return;
                 }
             }
         }, "BotLauncher");
         thread.setDaemon(true);
         thread.start();
+    }
+
+    private static void connectOnce(Bot bot, EventLoopGroup workerGroup, String host, int port, int retryDelay) {
+        if (!bot.isOnline()) {
+            bot.connect(workerGroup, host, port);
+        }
+
+        if (waitForLogin(bot, LOGIN_TIMEOUT_MS)) {
+            return;
+        }
+
+        LOGGER.warning(bot.getName() + " did not finish logging in, retrying later...");
+        if (bot.isOnline()) {
+            bot.disconnect("Retrying login");
+        }
+
+        sleep(retryDelay);
+    }
+
+    private static boolean sleep(int delay) {
+        if (delay <= 0) {
+            return true;
+        }
+        try {
+            Thread.sleep(delay);
+            return true;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
+        }
     }
 
     private static boolean waitForLogin(Bot bot, long timeoutMs) {
