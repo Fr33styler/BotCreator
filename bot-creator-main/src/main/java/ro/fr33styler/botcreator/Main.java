@@ -46,6 +46,7 @@ public class Main {
                 bots.add(bot);
             }
 
+            logLauncherSettings(bots.size(), arguments.getJoinDelay(), arguments.getRetryDelay(), arguments.getMaxOnline());
             startBotLauncher(bots, workerGroup, arguments.getHost(), arguments.getPort(), arguments.getJoinDelay(), arguments.getRetryDelay(), arguments.getMaxOnline());
 
             if (bots.isEmpty()) {
@@ -97,9 +98,11 @@ public class Main {
     private static void startBotLauncher(Collection<Bot> bots, EventLoopGroup workerGroup, String host, int port, int joinDelay, int retryDelay, int maxOnline) {
         Thread thread = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
-                int activeLimit = maxOnline > 0 ? Math.min(maxOnline, bots.size()) : bots.size();
+                int activeLimit = getActiveLimit(bots.size(), maxOnline);
                 int checked = 0;
                 boolean allLoggedIn = true;
+
+                disconnectAboveLimit(bots, activeLimit);
 
                 for (Bot bot : bots) {
                     if (checked++ >= activeLimit) {
@@ -123,6 +126,31 @@ public class Main {
         }, "BotLauncher");
         thread.setDaemon(true);
         thread.start();
+    }
+
+    private static void logLauncherSettings(int bots, int joinDelay, int retryDelay, int maxOnline) {
+        int activeLimit = getActiveLimit(bots, maxOnline);
+        String maxOnlineMessage = maxOnline > 0 ? String.valueOf(activeLimit) : "unlimited";
+        LOGGER.info("Launcher settings: clients=" + bots + ", maxOnline=" + maxOnlineMessage + ", joinDelay=" + joinDelay + "ms, retryDelay=" + retryDelay + "ms");
+        if (maxOnline > 0 && activeLimit < bots) {
+            LOGGER.info("Max online limit active: only Bot_0 through Bot_" + (activeLimit - 1) + " will be kept online.");
+        }
+    }
+
+    private static int getActiveLimit(int bots, int maxOnline) {
+        return maxOnline > 0 ? Math.min(maxOnline, bots) : bots;
+    }
+
+    private static void disconnectAboveLimit(Collection<Bot> bots, int activeLimit) {
+        int checked = 0;
+        for (Bot bot : bots) {
+            if (checked++ < activeLimit) {
+                continue;
+            }
+            if (bot.isOnline()) {
+                bot.disconnect("Max online limit reached");
+            }
+        }
     }
 
     private static void connectOnce(Bot bot, EventLoopGroup workerGroup, String host, int port, int retryDelay) {

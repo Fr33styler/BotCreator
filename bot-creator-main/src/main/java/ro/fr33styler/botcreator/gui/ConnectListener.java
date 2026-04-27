@@ -117,6 +117,8 @@ public class ConnectListener implements ActionListener {
             botsBox.removeItem(bot.getName());
         }
 
+        logLauncherSettings(amount, joinDelay, retryDelay, maxOnline);
+
         new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() {
@@ -134,9 +136,11 @@ public class ConnectListener implements ActionListener {
 
     private void startBotLauncher(String host, int port, int joinDelay, int retryDelay, int maxOnline) {
         while (!Thread.currentThread().isInterrupted()) {
-            int activeLimit = maxOnline > 0 ? Math.min(maxOnline, bots.size()) : bots.size();
+            int activeLimit = getActiveLimit(bots.size(), maxOnline);
             int checked = 0;
             boolean allLoggedIn = true;
+
+            disconnectAboveLimit(activeLimit);
 
             for (Bot bot : bots) {
                 if (checked++ >= activeLimit) {
@@ -155,6 +159,31 @@ public class ConnectListener implements ActionListener {
 
             if (allLoggedIn && !sleep(Math.max(1000, retryDelay))) {
                 return;
+            }
+        }
+    }
+
+    private void logLauncherSettings(int amount, int joinDelay, int retryDelay, int maxOnline) {
+        int activeLimit = getActiveLimit(amount, maxOnline);
+        String maxOnlineMessage = maxOnline > 0 ? String.valueOf(activeLimit) : "unlimited";
+        logger.info("Launcher settings: clients=" + amount + ", maxOnline=" + maxOnlineMessage + ", joinDelay=" + joinDelay + "ms, retryDelay=" + retryDelay + "ms");
+        if (maxOnline > 0 && activeLimit < amount) {
+            logger.info("Max online limit active: only Bot_0 through Bot_" + (activeLimit - 1) + " will be kept online.");
+        }
+    }
+
+    private static int getActiveLimit(int bots, int maxOnline) {
+        return maxOnline > 0 ? Math.min(maxOnline, bots) : bots;
+    }
+
+    private void disconnectAboveLimit(int activeLimit) {
+        int checked = 0;
+        for (Bot bot : bots) {
+            if (checked++ < activeLimit) {
+                continue;
+            }
+            if (bot.isOnline()) {
+                bot.disconnect("Max online limit reached");
             }
         }
     }
