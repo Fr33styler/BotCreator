@@ -24,11 +24,12 @@ public class ConnectListener implements ActionListener {
     private final JTextField clientsInput;
     private final JTextField joinDelayInput;
     private final JTextField retryDelayInput;
+    private final JTextField maxOnlineInput;
     private final JComboBox<String> versionsBox;
 
     private final JComboBox<String> botsBox;
 
-    public ConnectListener(Logger logger, Deque<Bot> bots, EventLoopGroup workerGroup, JTextField hostInput, JTextField portInput, JTextField clientsInput, JTextField joinDelayInput, JTextField retryDelayInput, JComboBox<String> versionsBox, JButton connect, JComboBox<String> botsBox) {
+    public ConnectListener(Logger logger, Deque<Bot> bots, EventLoopGroup workerGroup, JTextField hostInput, JTextField portInput, JTextField clientsInput, JTextField joinDelayInput, JTextField retryDelayInput, JTextField maxOnlineInput, JComboBox<String> versionsBox, JButton connect, JComboBox<String> botsBox) {
         this.logger = logger;
         this.bots = bots;
         this.workerGroup = workerGroup;
@@ -38,6 +39,7 @@ public class ConnectListener implements ActionListener {
         this.clientsInput = clientsInput;
         this.joinDelayInput = joinDelayInput;
         this.retryDelayInput = retryDelayInput;
+        this.maxOnlineInput = maxOnlineInput;
         this.versionsBox = versionsBox;
 
         this.connect = connect;
@@ -85,6 +87,15 @@ public class ConnectListener implements ActionListener {
             return;
         }
 
+        int maxOnline;
+        try {
+            maxOnline = Integer.parseInt(maxOnlineInput.getText());
+            if (maxOnline < 0) throw new NumberFormatException();
+        } catch (NumberFormatException exception) {
+            logger.severe("Max online must be a non-negative number!");
+            return;
+        }
+
         connect.setEnabled(false);
         connect.setText("Connecting...");
 
@@ -109,7 +120,7 @@ public class ConnectListener implements ActionListener {
         new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() {
-                startBotLauncher(host, port, joinDelay, retryDelay);
+                startBotLauncher(host, port, joinDelay, retryDelay, maxOnline);
                 return null;
             }
 
@@ -121,11 +132,16 @@ public class ConnectListener implements ActionListener {
         }.execute();
     }
 
-    private void startBotLauncher(String host, int port, int joinDelay, int retryDelay) {
+    private void startBotLauncher(String host, int port, int joinDelay, int retryDelay, int maxOnline) {
         while (!Thread.currentThread().isInterrupted()) {
+            int activeLimit = maxOnline > 0 ? Math.min(maxOnline, bots.size()) : bots.size();
+            int checked = 0;
             boolean allLoggedIn = true;
 
             for (Bot bot : bots) {
+                if (checked++ >= activeLimit) {
+                    break;
+                }
                 if (bot.isLoggedIn()) {
                     continue;
                 }

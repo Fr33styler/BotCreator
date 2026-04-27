@@ -46,7 +46,7 @@ public class Main {
                 bots.add(bot);
             }
 
-            startBotLauncher(bots, workerGroup, arguments.getHost(), arguments.getPort(), arguments.getJoinDelay(), arguments.getRetryDelay());
+            startBotLauncher(bots, workerGroup, arguments.getHost(), arguments.getPort(), arguments.getJoinDelay(), arguments.getRetryDelay(), arguments.getMaxOnline());
 
             if (bots.isEmpty()) {
                 workerGroup.shutdownGracefully();
@@ -94,12 +94,17 @@ public class Main {
         }
     }
 
-    private static void startBotLauncher(Collection<Bot> bots, EventLoopGroup workerGroup, String host, int port, int joinDelay, int retryDelay) {
+    private static void startBotLauncher(Collection<Bot> bots, EventLoopGroup workerGroup, String host, int port, int joinDelay, int retryDelay, int maxOnline) {
         Thread thread = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
+                int activeLimit = maxOnline > 0 ? Math.min(maxOnline, bots.size()) : bots.size();
+                int checked = 0;
                 boolean allLoggedIn = true;
 
                 for (Bot bot : bots) {
+                    if (checked++ >= activeLimit) {
+                        break;
+                    }
                     if (bot.isLoggedIn()) {
                         continue;
                     }
