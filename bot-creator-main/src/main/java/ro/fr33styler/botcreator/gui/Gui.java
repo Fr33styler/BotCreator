@@ -45,10 +45,6 @@ public class Gui {
         JTextField retryDelayInput = new JTextField("3000", 5);
         topPanel.add(retryDelayInput);
 
-        topPanel.add(new JLabel("Max Online: "));
-        JTextField maxOnlineInput = new JTextField("0", 3);
-        topPanel.add(maxOnlineInput);
-
         JComboBox<String> versionsBox = new JComboBox<>();
         for (ProtocolVersion version : ProtocolVersion.values()) {
             versionsBox.addItem(version.getVersion());
@@ -58,7 +54,7 @@ public class Gui {
         JButton connect = new JButton("Connect");
 
         connect.addActionListener(new ConnectListener(logger, bots, workerGroup,
-                hostInput, portInput, clientsInput, joinDelayInput, retryDelayInput, maxOnlineInput, versionsBox, connect, botsBox));
+                hostInput, portInput, clientsInput, joinDelayInput, retryDelayInput, versionsBox, connect, botsBox));
 
         topPanel.add(connect);
 
