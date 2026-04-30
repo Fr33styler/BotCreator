@@ -5,7 +5,9 @@ import ro.fr33styler.botcreator.BotLauncher;
 import ro.fr33styler.botcreator.bot.Bot;
 import ro.fr33styler.botcreator.bot.protocol.ProtocolVersion;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JTextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Deque;
@@ -105,18 +107,8 @@ public class ConnectListener implements ActionListener {
             botsBox.removeItem(bot.getName());
         }
 
-        new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() {
-                new BotLauncher(logger, bots, workerGroup, host, port, joinDelay, retryDelay).run();
-                return null;
-            }
-
-            @Override
-            protected void done() {
-                connect.setText("Connect");
-                connect.setEnabled(true);
-            }
-        }.execute();
+        new BotLauncher(logger, bots, workerGroup, host, port, joinDelay, retryDelay).start();
+        connect.setText("Connect");
+        connect.setEnabled(true);
     }
 }

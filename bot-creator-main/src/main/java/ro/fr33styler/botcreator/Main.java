@@ -44,9 +44,7 @@ public class Main {
                 bots.add(bot);
             }
 
-            Thread botLauncherThread = new Thread(new BotLauncher(LOGGER, bots, workerGroup, arguments.getHost(), arguments.getPort(), arguments.getJoinDelay(), arguments.getRetryDelay()), "BotLauncher");
-            botLauncherThread.setDaemon(true);
-            botLauncherThread.start();
+            new BotLauncher(LOGGER, bots, workerGroup, arguments.getHost(), arguments.getPort(), arguments.getJoinDelay(), arguments.getRetryDelay()).start();
 
             if (bots.isEmpty()) {
                 workerGroup.shutdownGracefully();
