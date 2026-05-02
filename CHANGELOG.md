@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.4.0](https://github.com/Fr33styler/BotCreator/compare/v2.3.3...v2.4.0) (2026-05-02)
+
+
+### Features
+
+* Merged pull request [#26](https://github.com/Fr33styler/BotCreator/issues/26) which adds login retry and delay ([12e54bd](https://github.com/Fr33styler/BotCreator/commit/12e54bdcc5317c8a5be608095e491c476fee6de6))
+
+
+### Bug Fixes
+
+* Fixed some issues related to bot launcher ([61942cf](https://github.com/Fr33styler/BotCreator/commit/61942cf1f734e5e15d07d0cd68cb5c53215d2063))
+
 ## [2.3.3](https://github.com/Fr33styler/BotCreator/compare/v2.3.2...v2.3.3) (2026-04-18)
 
 
