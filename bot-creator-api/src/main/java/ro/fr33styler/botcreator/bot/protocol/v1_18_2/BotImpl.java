@@ -49,7 +49,7 @@ public class BotImpl implements Bot {
 
     @Override
     public void sendMessage(String message) {
-        if (isOnline()) {
+        if (isLoggedIn()) {
             channel.writeAndFlush(new ServerBoundChatPacket(message));
         }
     }

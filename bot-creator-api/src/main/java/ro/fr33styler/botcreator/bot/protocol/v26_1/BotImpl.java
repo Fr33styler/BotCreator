@@ -54,14 +54,14 @@ public class BotImpl implements Bot {
 
     @Override
     public void sendMessage(String message) {
-        if (isOnline()) {
+        if (isLoggedIn()) {
             channel.writeAndFlush(new ServerBoundChatPacket(message, Instant.now().toEpochMilli(), 0L, null, 0, EMPTY_BYTE_SET, 0));
         }
     }
 
     @Override
     public void executeCommand(String command) {
-        if (isOnline()) {
+        if (isLoggedIn()) {
             channel.writeAndFlush(new ServerBoundChatCommandPacket(command));
         }
     }

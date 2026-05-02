@@ -60,8 +60,6 @@ public class Main {
                         break;
                     }
                     for (Bot bot : bots) {
-                        if (!bot.isLoggedIn()) continue;
-
                         if (message.startsWith("/")) {
                             bot.executeCommand(message);
                         } else {
