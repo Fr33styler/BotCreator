@@ -1,13 +1,11 @@
 package ro.fr33styler.botcreator.gui;
 
 import io.netty.channel.EventLoopGroup;
-import ro.fr33styler.botcreator.BotLauncher;
+import ro.fr33styler.botcreator.launcher.BotLauncher;
 import ro.fr33styler.botcreator.bot.Bot;
 import ro.fr33styler.botcreator.bot.protocol.ProtocolVersion;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JTextField;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Deque;
@@ -19,95 +17,97 @@ public class ConnectListener implements ActionListener {
     private final Deque<Bot> bots;
     private final EventLoopGroup workerGroup;
 
-    private final JButton connect;
-    private final JTextField hostInput;
-    private final JTextField portInput;
-    private final JTextField clientsInput;
-    private final JTextField joinDelayInput;
-    private final JTextField retryDelayInput;
-    private final JComboBox<String> versionsBox;
+    private final ConnectData connectData;
 
-    private final JComboBox<String> botsBox;
+    private BotLauncher launcher;
 
-    public ConnectListener(Logger logger, Deque<Bot> bots, EventLoopGroup workerGroup, JTextField hostInput, JTextField portInput, JTextField clientsInput, JTextField joinDelayInput, JTextField retryDelayInput, JComboBox<String> versionsBox, JButton connect, JComboBox<String> botsBox) {
+    public ConnectListener(Logger logger, Deque<Bot> bots, EventLoopGroup workerGroup, ConnectData connectData) {
         this.logger = logger;
         this.bots = bots;
         this.workerGroup = workerGroup;
 
-        this.hostInput = hostInput;
-        this.portInput = portInput;
-        this.clientsInput = clientsInput;
-        this.joinDelayInput = joinDelayInput;
-        this.retryDelayInput = retryDelayInput;
-        this.versionsBox = versionsBox;
-
-        this.connect = connect;
-        this.botsBox = botsBox;
+        this.connectData = connectData;
     }
 
     @Override
     public void actionPerformed(ActionEvent action) {
         int port;
         try {
-            port = Integer.parseInt(portInput.getText());
+            port = Integer.parseInt(connectData.getPort());
         } catch (NumberFormatException exception) {
             logger.severe("The port must be a number!");
             return;
         }
 
-        int amount;
+        int clients;
         try {
-            amount = Integer.parseInt(clientsInput.getText());
+            clients = Integer.parseInt(connectData.getClients());
         } catch (NumberFormatException exception) {
             logger.severe("The number of clients must be a number!");
             return;
         }
 
-        if (amount < 0) {
+        if (clients < 0) {
             logger.severe("The number of clients must be 0 or higher!");
             return;
         }
 
         int joinDelay;
         try {
-            joinDelay = Integer.parseInt(joinDelayInput.getText());
-            if (joinDelay < 0) throw new NumberFormatException();
+            joinDelay = Integer.parseInt(connectData.getJoinDelay());
         } catch (NumberFormatException exception) {
-            logger.severe("The join delay must be a non-negative number!");
+            logger.severe("The join delay must be a number!");
+            return;
+        }
+
+        if (joinDelay < 0) {
+            logger.severe("The join delay must be 0 or higher!");
             return;
         }
 
         int retryDelay;
         try {
-            retryDelay = Integer.parseInt(retryDelayInput.getText());
-            if (retryDelay < 0) throw new NumberFormatException();
+            retryDelay = Integer.parseInt(connectData.getRetryDelay());
         } catch (NumberFormatException exception) {
-            logger.severe("The retry delay must be a non-negative number!");
+            logger.severe("The retry delay must be a number!");
             return;
         }
+
+        if (retryDelay < 1000) {
+            logger.severe("The retry delay must be 1000 or higher!");
+            return;
+        }
+
+        JButton connect = connectData.getConnectButton();
+        JComboBox<String> botsBox = connectData.getBotsBox();
 
         connect.setEnabled(false);
         connect.setText("Connecting...");
 
-        String host = hostInput.getText();
+        if (launcher != null) {
+            launcher.stop();
+        }
+
+        String host = connectData.getHost();
 
         bots.removeIf(bot -> !bot.isOnline());
-        while (bots.size() < amount) {
+        while (bots.size() < clients) {
             int id = bots.size();
-            ProtocolVersion version = ProtocolVersion.getByVersion((String) versionsBox.getSelectedItem());
+            ProtocolVersion version = ProtocolVersion.getByVersion(connectData.getVersion());
             Logger botLogger = Logger.getLogger("Bot_" + id);
             botLogger.setParent(logger);
-            Bot bot = version.getProtocol().newBot(botLogger, "Bot_" + id);
-            bots.addLast(bot);
+            bots.addLast(version.getProtocol().newBot(botLogger, "Bot_" + id));
             botsBox.addItem("Bot_" + id);
         }
-        while (bots.size() > amount) {
+        while (bots.size() > clients) {
             Bot bot = bots.removeLast();
             bot.disconnect("You left the server!");
             botsBox.removeItem(bot.getName());
         }
 
-        new BotLauncher(logger, bots, workerGroup, host, port, joinDelay, retryDelay).start();
+        launcher = new BotLauncher(bots, workerGroup, host, port, joinDelay, retryDelay);
+        launcher.start();
+
         connect.setText("Connect");
         connect.setEnabled(true);
     }

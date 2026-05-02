@@ -6,6 +6,7 @@ import io.netty.channel.nio.NioIoHandler;
 import ro.fr33styler.botcreator.arguments.Arguments;
 import ro.fr33styler.botcreator.bot.Bot;
 import ro.fr33styler.botcreator.gui.Gui;
+import ro.fr33styler.botcreator.launcher.BotLauncher;
 
 import javax.swing.*;
 import java.awt.*;
@@ -40,26 +41,27 @@ public class Main {
                 Logger botLogger = Logger.getLogger(name);
                 botLogger.setParent(LOGGER);
 
-                Bot bot = arguments.getVersion().getProtocol().newBot(botLogger, name);
-                bots.add(bot);
+                bots.add(arguments.getVersion().getProtocol().newBot(botLogger, name));
             }
-
-            new BotLauncher(LOGGER, bots, workerGroup, arguments.getHost(), arguments.getPort(), arguments.getJoinDelay(), arguments.getRetryDelay()).start();
 
             if (bots.isEmpty()) {
                 workerGroup.shutdownGracefully();
                 LOGGER.severe("All of the bots failed to connect, closing!");
             } else {
+                BotLauncher launcher = new BotLauncher(bots, workerGroup, arguments.getHost(), arguments.getPort(),
+                        arguments.getJoinDelay(), arguments.getRetryDelay());
+                launcher.start();
                 Scanner scanner = new Scanner(System.in);
                 while (true) {
                     String message = scanner.nextLine();
                     if (message.equalsIgnoreCase("quit") || message.equalsIgnoreCase("exit")) {
+                        workerGroup.shutdownGracefully();
+                        launcher.stop();
                         break;
                     }
                     for (Bot bot : bots) {
-                        if (!bot.isLoggedIn()) {
-                            continue;
-                        }
+                        if (!bot.isLoggedIn()) continue;
+
                         if (message.startsWith("/")) {
                             bot.executeCommand(message);
                         } else {
@@ -72,8 +74,7 @@ public class Main {
             System.setProperty("sun.java2d.noddraw", "true");
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (Exception ignored) {
-            }
+            } catch (Exception ignored) {}
 
             JFrame frame = new JFrame("BotCreator");
             frame.setResizable(false);

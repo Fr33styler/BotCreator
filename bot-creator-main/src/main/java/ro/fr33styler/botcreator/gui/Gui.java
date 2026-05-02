@@ -51,12 +51,22 @@ public class Gui {
         }
         topPanel.add(versionsBox);
 
-        JButton connect = new JButton("Connect");
+        JButton connectButton = new JButton("Connect");
 
-        connect.addActionListener(new ConnectListener(logger, bots, workerGroup,
-                hostInput, portInput, clientsInput, joinDelayInput, retryDelayInput, versionsBox, connect, botsBox));
+        ConnectData connectData = ConnectData.builder()
+                .host(hostInput)
+                .port(portInput)
+                .clients(clientsInput)
+                .joinDelay(joinDelayInput)
+                .retryDelay(retryDelayInput)
+                .version(versionsBox)
+                .connect(connectButton)
+                .botsBox(botsBox)
+                .build();
 
-        topPanel.add(connect);
+        connectButton.addActionListener(new ConnectListener(logger, bots, workerGroup, connectData));
+
+        topPanel.add(connectButton);
 
         return topPanel;
     }

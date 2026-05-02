@@ -33,6 +33,11 @@ public class BotImpl implements Bot {
     }
 
     @Override
+    public Logger getLogger() {
+        return logger;
+    }
+
+    @Override
     public boolean isOnline() {
         return channel != null && channel.isActive();
     }
@@ -56,7 +61,6 @@ public class BotImpl implements Bot {
 
     @Override
     public void connect(EventLoopGroup workerGroup, String host, int port) {
-
         options = new ClientOptions(StageType.LOGIN_STAGE, logger, name, host, port);
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(workerGroup);
@@ -83,7 +87,8 @@ public class BotImpl implements Bot {
 
     @Override
     public void disconnect(String reason) {
-        if (channel == null) return;
+        if (!isOnline()) return;
+
         channel.disconnect();
         logger.log(Level.INFO, "Disconnected: {0}", reason);
     }

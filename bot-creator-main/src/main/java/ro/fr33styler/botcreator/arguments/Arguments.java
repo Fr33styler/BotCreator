@@ -76,7 +76,7 @@ public class Arguments {
                 return argument -> {
                     try {
                         arguments.clients = Integer.parseInt(argument);
-                        if (arguments.clients < 0) throw new IllegalArgumentException("Invalid clients!");
+                        if (arguments.clients < 0) throw new IllegalArgumentException("Clients must 0 or higher!");
                     } catch (NumberFormatException exception) {
                         throw new IllegalArgumentException("Invalid clients number!");
                     }
@@ -100,7 +100,7 @@ public class Arguments {
                 return argument -> {
                     try {
                         arguments.joinDelay = Integer.parseInt(argument);
-                        if (arguments.joinDelay < 0) throw new IllegalArgumentException("Join delay must be non-negative!");
+                        if (arguments.joinDelay < 0) throw new IllegalArgumentException("Join delay must be 0 or higher!");
                     } catch (NumberFormatException exception) {
                         throw new IllegalArgumentException("Invalid join delay number!");
                     }
@@ -110,7 +110,7 @@ public class Arguments {
                 return argument -> {
                     try {
                         arguments.retryDelay = Integer.parseInt(argument);
-                        if (arguments.retryDelay < 0) throw new IllegalArgumentException("Retry delay must be non-negative!");
+                        if (arguments.retryDelay < 1000) throw new IllegalArgumentException("Retry delay must be 1000 or higher!");
                     } catch (NumberFormatException exception) {
                         throw new IllegalArgumentException("Invalid retry delay number!");
                     }

@@ -14,7 +14,7 @@ public class ClientOptions {
     private Stage stage;
     private boolean compressed;
     private int maximumPacketSize;
-    private volatile boolean loggedIn;
+    private boolean loggedIn;
 
     public ClientOptions(Stage stage, Logger logger, String name, String host, int port) {
         setStage(stage);

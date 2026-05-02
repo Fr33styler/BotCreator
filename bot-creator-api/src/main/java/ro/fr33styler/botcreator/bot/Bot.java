@@ -2,9 +2,13 @@ package ro.fr33styler.botcreator.bot;
 
 import io.netty.channel.EventLoopGroup;
 
+import java.util.logging.Logger;
+
 public interface Bot {
 
     String getName();
+
+    Logger getLogger();
 
     boolean isOnline();
 
