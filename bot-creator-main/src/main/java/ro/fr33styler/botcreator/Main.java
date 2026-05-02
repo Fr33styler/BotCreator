@@ -3,14 +3,15 @@ package ro.fr33styler.botcreator;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.MultiThreadIoEventLoopGroup;
 import io.netty.channel.nio.NioIoHandler;
-import ro.fr33styler.botcreator.bot.Bot;
 import ro.fr33styler.botcreator.arguments.Arguments;
+import ro.fr33styler.botcreator.bot.Bot;
 import ro.fr33styler.botcreator.gui.Gui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,7 +20,6 @@ public class Main {
     public static final Logger LOGGER = Logger.getLogger("BotCreator");
 
     public static void main(String[] args) {
-
         EventLoopGroup workerGroup = new MultiThreadIoEventLoopGroup(NioIoHandler.newFactory());
         if (args.length > 0) {
             Arguments arguments;
@@ -36,15 +36,15 @@ public class Main {
             LOGGER.info("Bot Creator has started!");
 
             for (int i = 0; i < arguments.getClients(); i++) {
-                String name = "Bot_" + (i + 1);
+                String name = "Bot_" + i;
                 Logger botLogger = Logger.getLogger(name);
                 botLogger.setParent(LOGGER);
+
                 Bot bot = arguments.getVersion().getProtocol().newBot(botLogger, name);
-                bot.connect(workerGroup, arguments.getHost(), arguments.getPort());
-                if (bot.isOnline()) {
-                    bots.add(bot);
-                }
+                bots.add(bot);
             }
+
+            new BotLauncher(LOGGER, bots, workerGroup, arguments.getHost(), arguments.getPort(), arguments.getJoinDelay(), arguments.getRetryDelay()).start();
 
             if (bots.isEmpty()) {
                 workerGroup.shutdownGracefully();
@@ -57,6 +57,9 @@ public class Main {
                         break;
                     }
                     for (Bot bot : bots) {
+                        if (!bot.isLoggedIn()) {
+                            continue;
+                        }
                         if (message.startsWith("/")) {
                             bot.executeCommand(message);
                         } else {
@@ -66,19 +69,17 @@ public class Main {
                 }
             }
         } else {
-
             System.setProperty("sun.java2d.noddraw", "true");
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
 
             JFrame frame = new JFrame("BotCreator");
-
             frame.setResizable(false);
             frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
             Gui gui = new Gui(LOGGER);
-
             frame.add(gui.getTopPanel(workerGroup), BorderLayout.PAGE_START);
             frame.add(gui.getCenterPanel(), BorderLayout.CENTER);
             frame.add(gui.getBottomPanel(), BorderLayout.PAGE_END);

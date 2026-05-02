@@ -8,6 +8,8 @@ public interface Bot {
 
     boolean isOnline();
 
+    boolean isLoggedIn();
+
     void sendMessage(String message);
 
     void executeCommand(String command);

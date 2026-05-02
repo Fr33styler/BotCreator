@@ -37,6 +37,14 @@ public class Gui {
         JTextField clientsInput = new JTextField("1", 3);
         topPanel.add(clientsInput);
 
+        topPanel.add(new JLabel("Delay (ms): "));
+        JTextField joinDelayInput = new JTextField("1000", 5);
+        topPanel.add(joinDelayInput);
+
+        topPanel.add(new JLabel("Retry (ms): "));
+        JTextField retryDelayInput = new JTextField("3000", 5);
+        topPanel.add(retryDelayInput);
+
         JComboBox<String> versionsBox = new JComboBox<>();
         for (ProtocolVersion version : ProtocolVersion.values()) {
             versionsBox.addItem(version.getVersion());
@@ -46,7 +54,7 @@ public class Gui {
         JButton connect = new JButton("Connect");
 
         connect.addActionListener(new ConnectListener(logger, bots, workerGroup,
-                hostInput, portInput, clientsInput, versionsBox, connect, botsBox));
+                hostInput, portInput, clientsInput, joinDelayInput, retryDelayInput, versionsBox, connect, botsBox));
 
         topPanel.add(connect);
 
