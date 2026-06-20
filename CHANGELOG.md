@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.0](https://github.com/Fr33styler/BotCreator/compare/v2.4.0...v2.5.0) (2026-06-20)
+
+
+### Features
+
+* Added 26.2 version support. ([2ec0c81](https://github.com/Fr33styler/BotCreator/commit/2ec0c81a353453045352648b5a2b4b08b86e371d))
+
 ## [2.4.0](https://github.com/Fr33styler/BotCreator/compare/v2.3.3...v2.4.0) (2026-05-02)
 
 
