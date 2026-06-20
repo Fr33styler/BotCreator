@@ -8,6 +8,7 @@ import ro.fr33styler.botcreator.bot.protocol.v1_21_11.v1_21_11;
 import ro.fr33styler.botcreator.bot.protocol.v1_7_10.v1_7_10;
 import ro.fr33styler.botcreator.bot.protocol.v1_8_9.v1_8_9;
 import ro.fr33styler.botcreator.bot.protocol.v26_1.v26_1;
+import ro.fr33styler.botcreator.bot.protocol.v26_2.v26_2;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +16,7 @@ import java.util.function.Supplier;
 
 public enum ProtocolVersion {
 
+    V26_2("26.2", v26_2::new),
     V26_1("26.1", v26_1::new),
     V1_21_11("1.21.11", v1_21_11::new),
     V1_20_6("1.20.6", v1_20_6::new),
