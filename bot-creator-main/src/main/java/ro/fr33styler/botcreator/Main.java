@@ -84,6 +84,8 @@ public class Main {
             frame.add(gui.getBottomPanel(), BorderLayout.PAGE_END);
 
             frame.pack();
+            frame.setLocationRelativeTo(gui.getCenterPanel());
+            frame.setLocationByPlatform(true);
             frame.setVisible(true);
 
             Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> LOGGER.log(Level.SEVERE, throwable.getMessage(), throwable));
