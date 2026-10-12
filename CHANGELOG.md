@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.1](https://github.com/Fr33styler/BotCreator/compare/v2.6.0...v2.6.1) (2026-10-12)
+
+
+### Bug Fixes
+
+* Now the interface should appear in the center of the screen ([e86d4ee](https://github.com/Fr33styler/BotCreator/commit/e86d4ee59b9e41ba02eaf0456a3c94e05f3ab9e5))
+
 ## [2.6.0](https://github.com/Fr33styler/BotCreator/compare/v2.5.0...v2.6.0) (2026-09-25)
 
 
