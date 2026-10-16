@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.2](https://github.com/Fr33styler/BotCreator/compare/v2.6.1...v2.6.2) (2026-10-16)
+
+
+### Bug Fixes
+
+* Dropped the api suffix from the bot-creator-api module since it had implementation data ([ec41388](https://github.com/Fr33styler/BotCreator/commit/ec4138807f9f6449756363f952c886a285020017))
+
 ## [2.6.1](https://github.com/Fr33styler/BotCreator/compare/v2.6.0...v2.6.1) (2026-10-12)
 
 
